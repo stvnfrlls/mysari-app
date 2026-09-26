@@ -1,3 +1,13 @@
+# [1.6.0](https://github.com/stvnfrlls/mysari-app/compare/v1.5.0...v1.6.0) (2026-09-26)
+
+
+### Features
+
+* add database readiness check to CI workflow and update Semgrep job configuration ([83ffd32](https://github.com/stvnfrlls/mysari-app/commit/83ffd3229dbca55275e76fd66df380d06fae73af))
+* add Semgrep scanning for security vulnerabilities and audit PHP dependencies ([f7713f3](https://github.com/stvnfrlls/mysari-app/commit/f7713f38e2db3ce8a569523b64dce25bfb69aca7))
+* enhance database service health checks in Docker Compose and remove redundant wait step in CI ([5e4b8a1](https://github.com/stvnfrlls/mysari-app/commit/5e4b8a1ee95b2eae721f49c52d57bf904bdfa723))
+* update Semgrep job permissions to include actions read access ([641912f](https://github.com/stvnfrlls/mysari-app/commit/641912f05dafebecb7708dce401b5fa96321f724))
+
 # [1.5.0](https://github.com/stvnfrlls/mysari-app/compare/v1.4.0...v1.5.0) (2026-09-26)
 
 
