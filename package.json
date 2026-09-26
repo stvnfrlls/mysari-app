@@ -7,10 +7,12 @@
         "dev": "vite"
     },
     "devDependencies": {
+        "@playwright/test": "^1.63.0",
         "@semantic-release/changelog": "^7.0.0",
         "@semantic-release/git": "^11.0.1",
         "@semantic-release/github": "^12.0.10",
         "@tailwindcss/vite": "^4.0.0",
+        "@types/node": "^26.6.3",
         "concurrently": "^10.0.3",
         "laravel-vite-plugin": "^3.1",
         "semantic-release": "^25.0.9",
