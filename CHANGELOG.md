@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/stvnfrlls/mysari-app/compare/v1.1.0...v1.2.0) (2026-09-26)
+
+
+### Features
+
+* update environment configuration and enhance Playwright workflow ([3d66b4b](https://github.com/stvnfrlls/mysari-app/commit/3d66b4ba870cf59984ce78bd9f70275d2d53b898))
+
 # [1.1.0](https://github.com/stvnfrlls/mysari-app/compare/v1.0.1...v1.1.0) (2026-09-26)
 
 
