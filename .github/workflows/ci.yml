@@ -14,12 +14,29 @@ jobs:
     - uses: actions/setup-node@v5
       with:
         node-version: 22
+        cache: 'npm'
     - name: Install dependencies
       run: npm ci
+    - name: Get Playwright version
+      id: playwright-version
+      run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies[\"@playwright/test\"].version')" >> $GITHUB_OUTPUT
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ steps.playwright-version.outputs.version }}
     - name: Install Playwright Browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install --with-deps
     - name: Copy .env file
       run: cp .env.example .env
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-
     - name: Build and start containers
       run: docker compose up -d --build
     - name: Wait for app container to be ready
@@ -65,6 +82,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+          cache: 'npm'
       - run: npm ci
       - run: npx semantic-release
         env:
