@@ -17,8 +17,37 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
+    - name: Copy .env file
+      run: cp .env.example .env
+
+    - name: Build and start containers
+      run: docker compose up -d --build
+
+    - name: Wait for app container to be ready
+      run: |
+        for i in {1..30}; do
+          if docker compose exec -T app php artisan --version; then
+            echo "App is ready"
+            break
+          fi
+          echo "Waiting for app..."
+          sleep 2
+        done
+
+    - name: Generate app key
+      run: docker compose exec -T app php artisan key:generate
+
+    - name: Run migrations
+      run: docker compose exec -T app php artisan migrate --force
+
     - name: Run Playwright tests
       run: npx playwright test
+
+    - name: Stop containers
+      if: always()
+      run: docker compose down
+
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
