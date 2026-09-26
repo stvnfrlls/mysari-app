@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/stvnfrlls/mysari-app/compare/v1.4.0...v1.5.0) (2026-09-26)
+
+
+### Features
+
+* enhance CI workflow by adding Playwright version retrieval and caching for browsers and Composer dependencies ([ef854da](https://github.com/stvnfrlls/mysari-app/commit/ef854da3e19002246920a3ebe8940994d5dcf7dd))
+
 # [1.4.0](https://github.com/stvnfrlls/mysari-app/compare/v1.3.0...v1.4.0) (2026-09-26)
 
 
