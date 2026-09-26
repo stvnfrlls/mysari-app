@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/stvnfrlls/mysari-app/compare/v1.0.1...v1.1.0) (2026-09-26)
+
+
+### Features
+
+* add login authentication and landing page ([d9c0783](https://github.com/stvnfrlls/mysari-app/commit/d9c078393d6a9ab5265928d55f4d6e96683a9bdc))
+* add Playwright testing framework and implement login flow tests ([a442f6e](https://github.com/stvnfrlls/mysari-app/commit/a442f6e00c7034a80e503239117944983e5c2c8e))
+
 ## [1.0.1](https://github.com/stvnfrlls/mysari-app/compare/v1.0.0...v1.0.1) (2026-09-26)
 
 
