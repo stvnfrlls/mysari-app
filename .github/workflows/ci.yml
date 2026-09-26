@@ -51,6 +51,8 @@ jobs:
         done
     - name: Install PHP dependencies
       run: docker compose exec -T app composer install --no-interaction --prefer-dist --optimize-autoloader
+    - name: Audit PHP dependencies
+      run: docker compose exec -T app composer audit
     - name: Generate app key
       run: docker compose exec -T app php artisan key:generate
     - name: Run migrations
@@ -66,6 +68,23 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
+  semgrep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run Semgrep scan
+        run: semgrep scan --config=auto --config=p/php --sarif --output=semgrep.sarif
+        continue-on-error: true
+      - name: Upload SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
 
   release:
     needs: test
