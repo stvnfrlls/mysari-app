@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/stvnfrlls/mysari-app/compare/v1.3.0...v1.4.0) (2026-09-26)
+
+
+### Features
+
+* update CI workflow to use latest action versions and add HTML reporter for Playwright tests ([7d4ece0](https://github.com/stvnfrlls/mysari-app/commit/7d4ece030301c38cea45b1f832ac4be3096e94ab))
+
 # [1.3.0](https://github.com/stvnfrlls/mysari-app/compare/v1.2.0...v1.3.0) (2026-09-26)
 
 
