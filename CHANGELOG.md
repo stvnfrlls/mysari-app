@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/stvnfrlls/mysari-app/compare/v1.2.0...v1.3.0) (2026-09-26)
+
+
+### Features
+
+* consolidate CI workflows by removing old Playwright and release configurations and adding a unified test and release workflow ([4a4612c](https://github.com/stvnfrlls/mysari-app/commit/4a4612cc3a5cf1f1e2fa6e7c17184ef90bf5202a))
+
 # [1.2.0](https://github.com/stvnfrlls/mysari-app/compare/v1.1.0...v1.2.0) (2026-09-26)
 
 
