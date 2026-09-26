@@ -7,11 +7,18 @@
         <h1>Welcome back</h1>
         <p class="subtitle">Sign in to continue</p>
 
+        @if ($errors->any())
+            <div class="error-box">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="you@example.com" required autofocus>
+            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com"
+                required autofocus>
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="••••••••" required>
@@ -47,6 +54,16 @@
             font-size: 14px;
             letter-spacing: 0.1px;
             margin-bottom: 34px;
+        }
+
+        .error-box {
+            background: #2a1414;
+            border: 1px solid #4a1f1f;
+            color: #ff8080;
+            font-size: 13px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
         label {
