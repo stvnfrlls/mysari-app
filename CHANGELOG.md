@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/stvnfrlls/mysari-app/compare/v1.0.0...v1.0.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* grant issues and pull-requests write permissions for release workflow ([7600b23](https://github.com/stvnfrlls/mysari-app/commit/7600b23848abc10d0269d34a203ddc365db4effd))
+
 # 1.0.0 (2026-09-26)
 
 
