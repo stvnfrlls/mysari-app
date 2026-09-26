@@ -74,6 +74,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
+      actions: read
     container:
       image: semgrep/semgrep
     steps:
