@@ -49,16 +49,6 @@ jobs:
           echo "Waiting for app..."
           sleep 2
         done
-    - name: Wait for database to be ready
-      run: |
-        for i in {1..30}; do
-          if docker compose exec -T db mysqladmin ping -h localhost --silent; then
-            echo "Database is ready"
-            break
-          fi
-          echo "Waiting for database..."
-          sleep 2
-        done
     - name: Install PHP dependencies
       run: docker compose exec -T app composer install --no-interaction --prefer-dist --optimize-autoloader
     - name: Audit PHP dependencies
