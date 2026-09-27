@@ -1,3 +1,11 @@
+# [1.10.0](https://github.com/stvnfrlls/mysari-app/compare/v1.9.0...v1.10.0) (2026-09-27)
+
+
+### Features
+
+* **docker:** add horizontal scaling support with Redis-backed sessions ([665e282](https://github.com/stvnfrlls/mysari-app/commit/665e2824985fcb25d10209535c774c2afbe4eae0))
+* **docker:** make app service load-balancer ready ([4ce70a4](https://github.com/stvnfrlls/mysari-app/commit/4ce70a4c3a9bbf2ba6fe20a2008d62642de4e657))
+
 # [1.9.0](https://github.com/stvnfrlls/mysari-app/compare/v1.8.1...v1.9.0) (2026-09-27)
 
 
