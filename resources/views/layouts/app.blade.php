@@ -77,6 +77,109 @@
             opacity: 0.85;
         }
 
+        .list-page {
+            align-items: flex-start;
+            padding: 48px 40px;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 26px;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .cta-button-secondary {
+            padding: 11px 22px;
+            background: transparent;
+            color: #f5f5f5;
+            border: 1px solid #333;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .table-panel {
+            background: #111111;
+            border: 1px solid #1f1f1f;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .muted {
+            color: #888;
+        }
+
+        .badge-low {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            background: #2a1414;
+            color: #ff8080;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 14px;
+        }
+
+        .actions a,
+        .actions button {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 13px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0;
+        }
+
+        .actions a:hover,
+        .actions button:hover {
+            color: #f5f5f5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+
+        .empty-hint {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+
         .logout-button {
             padding: 10px 20px;
             background: transparent;
@@ -182,7 +285,7 @@
         <a href="/" class="brand">{{ config('app.name') }}</a>
     </header>
 
-    <main>
+    <main class="@yield('main-class')">
         @yield('content')
     </main>
 

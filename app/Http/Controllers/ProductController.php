@@ -60,4 +60,13 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('status', 'Product deleted.');
     }
+
+    public function lowStock()
+    {
+        $products = Product::whereColumn('stock_quantity', '<=', 'low_stock_threshold')
+            ->orderBy('stock_quantity')
+            ->get();
+
+        return view('products.low-stock', compact('products'));
+    }
 }

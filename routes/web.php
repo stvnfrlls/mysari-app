@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +23,11 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('products', ProductController::class)
         ->except(['show']);
+    Route::get('/products/low-stock', [ProductController::class, 'lowStock'])->name('products.low-stock');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+
+    Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
 });
