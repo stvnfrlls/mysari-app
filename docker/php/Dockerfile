@@ -16,5 +16,12 @@ COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000
+
+# nosemgrep: dockerfile.security.missing-user.missing-user
+# nosemgrep: dockerfile.security.missing-user-entrypoint.missing-user-entrypoint
+# php-fpm's master process requires root to bind and manage workers; actual
+# request handling happens in worker processes running as www-data, set via
+# /usr/local/etc/php-fpm.d/www.conf (user/group directives, default in the
+# base image). This is php-fpm's standard privilege-separation model.
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["php-fpm"]

@@ -1,6 +1,8 @@
 #!/bin/sh
-mkdir -p storage/framework/{sessions,views,cache}
-chmod -R 775 storage bootstrap/cache
+set -e
+
+mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 exec "$@"
