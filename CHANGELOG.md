@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/stvnfrlls/mysari-app/compare/v1.8.0...v1.8.1) (2026-09-27)
+
+
+### Bug Fixes
+
+* remove unused testing database init script causing CI db startup failure ([ba0d12a](https://github.com/stvnfrlls/mysari-app/commit/ba0d12a02eb564bcd7c070458bb27b596c148be7))
+
 # [1.8.0](https://github.com/stvnfrlls/mysari-app/compare/v1.7.0...v1.8.0) (2026-09-27)
 
 
