@@ -20,20 +20,42 @@
         </div>
 
         <div class="stat-grid">
-            @foreach ([['label' => "Today's Sales", 'value' => '₱0.00'], ['label' => 'Items in Stock', 'value' => '0'], ['label' => 'Low Stock Alerts', 'value' => '0'], ['label' => 'Transactions Today', 'value' => '0']] as $stat)
-                <div class="stat-card">
-                    <p class="stat-label">{{ $stat['label'] }}</p>
-                    <p class="stat-value">{{ $stat['value'] }}</p>
-                </div>
-            @endforeach
+            <div class="stat-card">
+                <p class="stat-label">Today's Sales</p>
+                <p class="stat-value">₱{{ number_format($stats['todays_sales'], 2) }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Items in Stock</p>
+                <p class="stat-value">{{ $stats['items_in_stock'] }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Low Stock Alerts</p>
+                <p class="stat-value">{{ $stats['low_stock_count'] }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Transactions Today</p>
+                <p class="stat-value">{{ $stats['transactions_today'] }}</p>
+            </div>
         </div>
 
         <div class="activity-panel">
             <h2>Recent Activity</h2>
-            <div class="activity-empty">
-                <p>No activity yet.</p>
-                <p class="activity-hint">Sales and stock updates will appear here once you start recording them.</p>
-            </div>
+            @if ($recentTransactions->isEmpty())
+                <div class="activity-empty">
+                    <p>No activity yet.</p>
+                    <p class="activity-hint">Sales and stock updates will appear here once you start recording them.</p>
+                </div>
+            @else
+                @foreach ($recentTransactions as $transaction)
+                    @foreach ($transaction->items as $item)
+                        <p class="activity-row">
+                            Sold {{ $item->quantity }}× {{ $item->product->name ?? 'Deleted product' }} —
+                            ₱{{ number_format($transaction->total, 2) }}
+                            <span class="muted">{{ $transaction->created_at->diffForHumans() }}</span>
+                        </p>
+                    @endforeach
+                @endforeach
+            @endif
         </div>
     </div>
 @endsection
@@ -105,6 +127,23 @@
             font-weight: 600;
             font-size: 24px;
             letter-spacing: -0.3px;
+        }
+
+        .activity-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 14px;
+        }
+
+        .activity-row:last-child {
+            border-bottom: none;
+        }
+
+        .muted {
+            color: #777;
+            font-size: 13px;
         }
 
         .activity-panel {

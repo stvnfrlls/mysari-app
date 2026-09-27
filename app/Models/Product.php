@@ -25,4 +25,9 @@ class Product extends Model
     {
         return $this->stock_quantity <= $this->low_stock_threshold;
     }
+
+    public function transactionItems()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 }

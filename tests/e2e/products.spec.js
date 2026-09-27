@@ -1,15 +1,9 @@
 import { test, expect } from '@playwright/test';
-
-async function login(page) {
-    await page.goto('/login');
-    await page.getByLabel('Email').fill('testuser@example.com');
-    await page.getByLabel('Password').fill('password123');
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await expect(page).toHaveURL('/dashboard');
-}
+import { execSync } from 'child_process';
 
 test.describe('Product management', () => {
     test.beforeEach(async ({ page }) => {
+        execSync('docker compose exec -T app php artisan test:reset-data');
         await login(page);
     });
 
@@ -124,3 +118,11 @@ test.describe('Product management', () => {
         await expect(page.getByText(sku)).not.toBeVisible();
     });
 });
+
+async function login(page) {
+    await page.goto('/login');
+    await page.getByLabel('Email').fill('testuser@example.com');
+    await page.getByLabel('Password').fill('password123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
+    await expect(page).toHaveURL('/dashboard');
+}
