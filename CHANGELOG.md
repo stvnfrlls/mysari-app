@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/stvnfrlls/mysari-app/compare/v1.6.0...v1.6.1) (2026-09-27)
+
+
+### Bug Fixes
+
+* **security:** pin CI actions to SHAs, harden Dockerfile, enforce npm release age ([4e6336f](https://github.com/stvnfrlls/mysari-app/commit/4e6336fdc1484f52171315198211393648631867))
+
 # [1.6.0](https://github.com/stvnfrlls/mysari-app/compare/v1.5.0...v1.6.0) (2026-09-26)
 
 
