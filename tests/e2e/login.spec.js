@@ -19,7 +19,7 @@ test.describe('Login flow', () => {
         await page.getByRole('button', { name: 'Sign In' }).click();
 
         await expect(page).toHaveURL('/dashboard');
-        await expect(page.getByText('testuser@example.com')).toBeVisible();
+        await expect(page.getByText('Welcome back, Test User')).toBeVisible();
     });
 
     test('invalid credentials show an error', async ({ page }) => {

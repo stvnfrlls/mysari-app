@@ -3,40 +3,152 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="dashboard-box">
-        <h1>You're signed in</h1>
-        <p class="hero-subtitle">{{ auth()->user()->email }}</p>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="cta-button">Log Out</button>
-        </form>
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="dashboard-subtitle">Welcome back, {{ auth()->user()->name }}</p>
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="logout-button">Log Out</button>
+            </form>
+        </div>
+
+        <div class="stat-grid">
+            @foreach ([['label' => "Today's Sales", 'value' => '₱0.00'], ['label' => 'Items in Stock', 'value' => '0'], ['label' => 'Low Stock Alerts', 'value' => '0'], ['label' => 'Transactions Today', 'value' => '0']] as $stat)
+                <div class="stat-card">
+                    <p class="stat-label">{{ $stat['label'] }}</p>
+                    <p class="stat-value">{{ $stat['value'] }}</p>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="activity-panel">
+            <h2>Recent Activity</h2>
+            <div class="activity-empty">
+                <p>No activity yet.</p>
+                <p class="activity-hint">Sales and stock updates will appear here once you start recording them.</p>
+            </div>
+        </div>
     </div>
 @endsection
 
 @section('styles')
     <style>
-        .dashboard-box {
-            text-align: center;
+        main {
+            align-items: flex-start;
+            padding: 48px 40px;
         }
 
-        .dashboard-box h1 {
+        .dashboard {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h1 {
             font-family: var(--font-display);
             font-weight: 600;
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: 26px;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
         }
 
-        .cta-button {
-            margin-top: 24px;
-            padding: 12px 28px;
-            background: #f5f5f5;
-            color: #0a0a0a;
-            border: none;
+        .dashboard-subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .logout-button {
+            padding: 10px 20px;
+            background: transparent;
+            color: #ccc;
+            border: 1px solid #2a2a2a;
             border-radius: 8px;
             font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
+            transition: border-color 0.15s ease, color 0.15s ease;
+        }
+
+        .logout-button:hover {
+            border-color: #4a4a4a;
+            color: #f5f5f5;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #111111;
+            border: 1px solid #1f1f1f;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 24px;
+            letter-spacing: -0.3px;
+        }
+
+        .activity-panel {
+            background: #111111;
+            border: 1px solid #1f1f1f;
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .activity-panel h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .activity-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+
+        .activity-empty p {
+            font-size: 14px;
+        }
+
+        .activity-hint {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        @media (max-width: 720px) {
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 @endsection
