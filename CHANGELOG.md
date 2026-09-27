@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/stvnfrlls/mysari-app/compare/v1.7.0...v1.8.0) (2026-09-27)
+
+
+### Features
+
+* add product management with CRUD and low stock tracking ([fc44457](https://github.com/stvnfrlls/mysari-app/commit/fc444571d99a2d27dd22598bad5cd41e057e857d))
+
 # [1.7.0](https://github.com/stvnfrlls/mysari-app/compare/v1.6.1...v1.7.0) (2026-09-27)
 
 
