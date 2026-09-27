@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/stvnfrlls/mysari-app/compare/v1.6.1...v1.7.0) (2026-09-27)
+
+
+### Features
+
+* add dashboard UI and playwright e2e tests for login flow ([170779c](https://github.com/stvnfrlls/mysari-app/commit/170779c45fd522781e76d4e8d4b546fd2fff54a7))
+
 ## [1.6.1](https://github.com/stvnfrlls/mysari-app/compare/v1.6.0...v1.6.1) (2026-09-27)
 
 
