@@ -9,10 +9,14 @@
                 <h1>Dashboard</h1>
                 <p class="dashboard-subtitle">Welcome back, {{ auth()->user()->name }}</p>
             </div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="logout-button">Log Out</button>
-            </form>
+
+            <div class="header-actions">
+                <a href="{{ route('products.index') }}" class="cta-button">Manage Products</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="logout-button">Log Out</button>
+                </form>
+            </div>
         </div>
 
         <div class="stat-grid">
@@ -41,6 +45,12 @@
             padding: 48px 40px;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .dashboard {
             width: 100%;
             max-width: 960px;
@@ -65,24 +75,6 @@
         .dashboard-subtitle {
             color: #888;
             font-size: 14px;
-        }
-
-        .logout-button {
-            padding: 10px 20px;
-            background: transparent;
-            color: #ccc;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            font-family: var(--font-sans);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: border-color 0.15s ease, color 0.15s ease;
-        }
-
-        .logout-button:hover {
-            border-color: #4a4a4a;
-            color: #f5f5f5;
         }
 
         .stat-grid {
