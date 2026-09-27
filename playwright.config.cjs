@@ -1,4 +1,5 @@
 const { defineConfig, devices } = require('@playwright/test');
+require('dotenv').config({ path: require('path').resolve(__dirname, '.env.playwright') }); // add this line
 
 module.exports = defineConfig({
     testDir: './tests/e2e',

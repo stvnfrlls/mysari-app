@@ -121,8 +121,8 @@ test.describe('Product management', () => {
 
 async function login(page) {
     await page.goto('/login');
-    await page.getByLabel('Email').fill('testuser@example.com');
-    await page.getByLabel('Password').fill('password123');
+    await page.getByLabel('Email').fill(process.env.TEST_USER_EMAIL);
+    await page.getByLabel('Password').fill(process.env.TEST_USER_PASSWORD);
     await page.getByRole('button', { name: 'Sign In' }).click();
     await expect(page).toHaveURL('/dashboard');
 }

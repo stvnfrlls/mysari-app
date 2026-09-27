@@ -14,8 +14,8 @@ test.describe('Login flow', () => {
     test('successful login redirects to dashboard', async ({ page }) => {
         await page.goto('/login');
 
-        await page.getByLabel('Email').fill('testuser@example.com');
-        await page.getByLabel('Password').fill('password123');
+        await page.getByLabel('Email').fill(process.env.TEST_USER_EMAIL);
+        await page.getByLabel('Password').fill(process.env.TEST_USER_PASSWORD);
         await page.getByRole('button', { name: 'Sign In' }).click();
 
         await expect(page).toHaveURL('/dashboard');
@@ -25,7 +25,7 @@ test.describe('Login flow', () => {
     test('invalid credentials show an error', async ({ page }) => {
         await page.goto('/login');
 
-        await page.getByLabel('Email').fill('testuser@example.com');
+        await page.getByLabel('Email').fill(process.env.TEST_USER_EMAIL);
         await page.getByLabel('Password').fill('wrongpassword');
         await page.getByRole('button', { name: 'Sign In' }).click();
 
@@ -35,8 +35,8 @@ test.describe('Login flow', () => {
 
     test('logout redirects to landing page', async ({ page }) => {
         await page.goto('/login');
-        await page.getByLabel('Email').fill('testuser@example.com');
-        await page.getByLabel('Password').fill('password123');
+        await page.getByLabel('Email').fill(process.env.TEST_USER_EMAIL);
+        await page.getByLabel('Password').fill(process.env.TEST_USER_PASSWORD);
         await page.getByRole('button', { name: 'Sign In' }).click();
 
         await page.getByRole('button', { name: 'Log Out' }).click();

@@ -59,6 +59,9 @@ jobs:
       run: docker compose exec -T app php artisan migrate --force
     - name: Run Playwright tests
       run: npx playwright test
+      env:
+        TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
     - name: Stop containers
       if: always()
       run: docker compose down
