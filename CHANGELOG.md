@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/stvnfrlls/mysari-app/compare/v1.8.1...v1.9.0) (2026-09-27)
+
+
+### Features
+
+* add sales transaction recording with live dashboard stats ([1891c1b](https://github.com/stvnfrlls/mysari-app/commit/1891c1b385de97d57eed73a22baf539acfa6d920))
+
 ## [1.8.1](https://github.com/stvnfrlls/mysari-app/compare/v1.8.0...v1.8.1) (2026-09-27)
 
 
