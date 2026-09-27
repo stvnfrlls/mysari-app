@@ -27,6 +27,15 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: ${APP_NAME}-redis
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    networks:
+      - app-network
+
   db:
     image: mysql:8.0
     container_name: ${APP_NAME}-mysql
@@ -55,3 +64,4 @@ networks:
 
 volumes:
   dbdata:
+  redisdata:
