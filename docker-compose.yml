@@ -4,7 +4,6 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     image: ${IMAGE_NAME}:latest
-    container_name: ${APP_NAME}-php
     restart: unless-stopped
     volumes:
       - ./:/var/www
