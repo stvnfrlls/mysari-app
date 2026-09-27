@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/stvnfrlls/mysari-app/compare/v1.10.0...v1.11.0) (2026-09-27)
+
+
+### Features
+
+* add low-stock view and sales report with e2e coverage ([765cc82](https://github.com/stvnfrlls/mysari-app/commit/765cc82f45923c15477328f9eb4383f027770ed4))
+
 # [1.10.0](https://github.com/stvnfrlls/mysari-app/compare/v1.9.0...v1.10.0) (2026-09-27)
 
 
