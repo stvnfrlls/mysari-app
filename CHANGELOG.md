@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/stvnfrlls/mysari-app/compare/v1.14.0...v1.15.0) (2026-10-03)
+
+
+### Features
+
+* add owner-only user management screen ([58fab16](https://github.com/stvnfrlls/mysari-app/commit/58fab168c202295f2876917709d92db9c666c3ea))
+
 # [1.14.0](https://github.com/stvnfrlls/mysari-app/compare/v1.13.0...v1.14.0) (2026-10-03)
 
 
