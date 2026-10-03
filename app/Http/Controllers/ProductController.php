@@ -39,10 +39,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'cost_price' => ['nullable', 'numeric', 'min:0'],
-            'stock_quantity' => ['required', 'integer', 'min:0'],
-            'low_stock_threshold' => ['required', 'integer', 'min:0'],
+            'price' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
+            'cost_price' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
+            'stock_quantity' => ['required', 'integer', 'min:0', 'max:1000000'],
+            'low_stock_threshold' => ['required', 'integer', 'min:0', 'max:1000000'],
         ]);
 
         Product::create($validated);
@@ -60,10 +60,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['required', 'string', 'max:100', 'unique:products,sku,' . $product->id],
-            'price' => ['required', 'numeric', 'min:0'],
-            'cost_price' => ['nullable', 'numeric', 'min:0'],
-            'stock_quantity' => ['required', 'integer', 'min:0'],
-            'low_stock_threshold' => ['required', 'integer', 'min:0'],
+            'price' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
+            'cost_price' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
+            'stock_quantity' => ['required', 'integer', 'min:0', 'max:1000000'],
+            'low_stock_threshold' => ['required', 'integer', 'min:0', 'max:1000000'],
         ]);
 
         DB::transaction(function () use ($product, $validated) {
