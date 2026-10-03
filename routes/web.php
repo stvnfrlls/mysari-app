@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : view('landing');
@@ -46,4 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
     Route::post('/customers/{customer}/payments', [CustomerController::class, 'pay'])->name('customers.pay');
+
+    Route::middleware('role:owner')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
+    });
 });
