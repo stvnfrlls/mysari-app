@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -49,7 +51,21 @@ class ProductController extends Controller
             'low_stock_threshold' => ['required', 'integer', 'min:0'],
         ]);
 
-        $product->update($validated);
+        DB::transaction(function () use ($product, $validated) {
+            $locked = Product::whereKey($product->id)->lockForUpdate()->firstOrFail();
+            $change = (int) $validated['stock_quantity'] - $locked->stock_quantity;
+
+            $locked->update($validated);
+
+            if ($change !== 0) {
+                StockMovement::create([
+                    'product_id'      => $locked->id,
+                    'type'            => 'adjustment',
+                    'quantity_change' => $change,
+                    'note'            => 'Edited from product form',
+                ]);
+            }
+        });
 
         return redirect()->route('products.index')->with('status', 'Product updated.');
     }
@@ -68,5 +84,34 @@ class ProductController extends Controller
             ->get();
 
         return view('products.low-stock', compact('products'));
+    }
+
+    public function restock(Request $request, Product $product)
+    {
+        $data = $request->validate([
+            'quantity' => ['required', 'integer', 'min:1', 'max:100000'],
+            'note'     => ['nullable', 'string', 'max:255'],
+        ]);
+
+        DB::transaction(function () use ($product, $data) {
+            $locked = Product::whereKey($product->id)->lockForUpdate()->firstOrFail();
+            $locked->increment('stock_quantity', $data['quantity']);
+
+            StockMovement::create([
+                'product_id'      => $locked->id,
+                'type'            => 'restock',
+                'quantity_change' => $data['quantity'],
+                'note'            => $data['note'] ?? null,
+            ]);
+        });
+
+        return back()->with('status', 'Stock updated.');
+    }
+
+    public function history(Product $product)
+    {
+        $movements = $product->movements()->paginate(25);
+
+        return view('products.history', compact('product', 'movements'));
     }
 }

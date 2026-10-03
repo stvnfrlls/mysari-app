@@ -30,4 +30,9 @@ class Product extends Model
     {
         return $this->hasMany(TransactionItem::class);
     }
+
+    public function movements()
+    {
+        return $this->hasMany(StockMovement::class)->latest()->latest('id');
+    }
 }

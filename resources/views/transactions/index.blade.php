@@ -30,17 +30,32 @@
                             <th>Qty</th>
                             <th>Total</th>
                             <th>Recorded By</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($transactions as $transaction)
                             @foreach ($transaction->items as $item)
-                                <tr>
+                                <tr @class(['voided' => $transaction->isVoided()])>
                                     <td class="muted">{{ $transaction->created_at->format('M j, Y g:i A') }}</td>
                                     <td>{{ $item->product->name ?? 'Deleted product' }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>₱{{ number_format($transaction->total, 2) }}</td>
                                     <td class="muted">{{ $transaction->user->name }}</td>
+                                    <td class="actions">
+                                        @if ($loop->first)
+                                            @if ($transaction->isVoided())
+                                                <span class="badge-voided"
+                                                    title="{{ $transaction->void_reason }}">Voided</span>
+                                            @else
+                                                <form method="POST" action="{{ route('transactions.void', $transaction) }}"
+                                                    onsubmit="return confirm('Void this sale and restore stock?')">
+                                                    @csrf
+                                                    <button type="submit" class="void-button">Void</button>
+                                                </form>
+                                            @endif
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         @endforeach
@@ -107,6 +122,43 @@
 
         .pagination {
             margin-top: 20px;
+        }
+
+        tr.voided td {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        tr.voided td.actions {
+            opacity: 1;
+            text-decoration: none;
+        }
+
+        .actions {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .void-button {
+            background: transparent;
+            border: 1px solid #3a1f1f;
+            color: #e5484d;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .void-button:hover {
+            background: #2a1214;
+        }
+
+        .badge-voided {
+            color: #888;
+            font-size: 12px;
+            border: 1px solid #2a2a2a;
+            border-radius: 999px;
+            padding: 2px 10px;
         }
     </style>
 @endsection

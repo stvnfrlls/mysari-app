@@ -20,12 +20,12 @@ class ReportController extends Controller
             : now()->endOfDay();
 
         $summary = [
-            'total_revenue' => Transaction::whereBetween('created_at', [$from, $to])->sum('total'),
-            'transaction_count' => Transaction::whereBetween('created_at', [$from, $to])->count(),
+            'total_revenue' => Transaction::active()->whereBetween('created_at', [$from, $to])->sum('total'),
+            'transaction_count' => Transaction::active()->whereBetween('created_at', [$from, $to])->count(),
         ];
 
         $productBreakdown = TransactionItem::whereHas('transaction', function ($query) use ($from, $to) {
-            $query->whereBetween('created_at', [$from, $to]);
+            $query->active()->whereBetween('created_at', [$from, $to]);
         })
             ->selectRaw('product_id, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue')
             ->groupBy('product_id')

@@ -30,4 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+
+    Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])
+        ->name('transactions.void');
+
+    Route::post('/products/{product}/restock', [ProductController::class, 'restock'])->name('products.restock');
+    Route::get('/products/{product}/history', [ProductController::class, 'history'])->name('products.history');
 });

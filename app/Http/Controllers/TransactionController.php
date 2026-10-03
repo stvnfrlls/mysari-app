@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,20 +34,21 @@ class TransactionController extends Controller
             'quantity' => ['required', 'integer', 'min:1'],
         ]);
 
-        $product = Product::findOrFail($validated['product_id']);
+        $available = null;
 
-        if ($validated['quantity'] > $product->stock_quantity) {
-            return back()
-                ->withInput()
-                ->withErrors(['quantity' => 'Not enough stock. Only ' . $product->stock_quantity . ' available.']);
-        }
+        DB::transaction(function () use ($validated, $request, &$available) {
+            $product = Product::whereKey($validated['product_id'])
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        DB::transaction(function () use ($product, $validated, $request) {
-            $total = $product->price * $validated['quantity'];
+            if ($validated['quantity'] > $product->stock_quantity) {
+                $available = $product->stock_quantity;
+                return;
+            }
 
             $transaction = Transaction::create([
                 'user_id' => $request->user()->id,
-                'total' => $total,
+                'total' => $product->price * $validated['quantity'],
             ]);
 
             TransactionItem::create([
@@ -57,8 +59,56 @@ class TransactionController extends Controller
             ]);
 
             $product->decrement('stock_quantity', $validated['quantity']);
+
+            StockMovement::create([
+                'product_id' => $product->id,
+                'transaction_id' => $transaction->id,
+                'type' => 'sale',
+                'quantity_change' => -$validated['quantity'],
+            ]);
         });
 
+        if ($available !== null) {
+            return back()
+                ->withInput()
+                ->withErrors(['quantity' => 'Not enough stock. Only ' . $available . ' available.']);
+        }
+
         return redirect()->route('transactions.index')->with('status', 'Sale recorded.');
+    }
+
+    public function void(Request $request, Transaction $transaction)
+    {
+        $data = $request->validate(['reason' => ['nullable', 'string', 'max:255']]);
+
+        DB::transaction(function () use ($transaction, $data) {
+            $locked = Transaction::with('items')
+                ->whereKey($transaction->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($locked->isVoided()) {
+                return;
+            }
+
+            foreach ($locked->items as $item) {
+                Product::whereKey($item->product_id)->increment('stock_quantity', $item->quantity);
+
+                StockMovement::create([
+                    'product_id'      => $item->product_id,
+                    'transaction_id'  => $locked->id,
+                    'type'            => 'void',
+                    'quantity_change' => $item->quantity,
+                    'note'            => $data['reason'] ?? null,
+                ]);
+            }
+
+            $locked->forceFill([
+                'voided_at'   => now(),
+                'void_reason' => $data['reason'] ?? null,
+            ])->save();
+        });
+
+        return redirect()->route('transactions.index')->with('status', 'Transaction voided.');
     }
 }
