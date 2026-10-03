@@ -47,18 +47,20 @@
 
         <div class="activity-panel top-panel" id="topProducts">
             <h2>Top Sellers Today</h2>
-            @if ($topProducts->isEmpty())
-                <div class="activity-empty">
-                    <p>No sales yet today.</p>
-                </div>
-            @else
-                @foreach ($topProducts as $row)
-                    <p class="top-row">
-                        <span>{{ $row->product->name ?? 'Deleted product' }}</span>
-                        <span class="muted">{{ $row->units_sold }} sold</span>
-                    </p>
-                @endforeach
-            @endif
+            <div id="topList">
+                @if ($topProducts->isEmpty())
+                    <div class="activity-empty">
+                        <p>No sales yet today.</p>
+                    </div>
+                @else
+                    @foreach ($topProducts as $row)
+                        <p class="top-row">
+                            <span>{{ $row->product->name ?? 'Deleted product' }}</span>
+                            <span class="muted">{{ $row->units_sold }} sold</span>
+                        </p>
+                    @endforeach
+                @endif
+            </div>
         </div>
 
         <div class="activity-panel top-panel" id="lowStockAlerts">
@@ -80,29 +82,31 @@
             </div>
         </div>
 
-        <div class="activity-panel">
+        <div class="activity-panel" id="recentActivity">
             <h2>Recent Activity</h2>
-            @if ($recentTransactions->isEmpty())
-                <div class="activity-empty">
-                    <p>No activity yet.</p>
-                    <p class="activity-hint">Sales and stock updates will appear here once you start recording them.</p>
-                </div>
-            @else
-                @foreach ($recentTransactions as $transaction)
-                    <p class="activity-row">
-                        <span>
-                            Sold
-                            @foreach ($transaction->items as $item)
-                                {{ $item->quantity }}× {{ $item->product->name ?? 'Deleted product' }}@if (!$loop->last)
-                                    ,
-                                @endif
-                            @endforeach
-                            — ₱{{ number_format($transaction->total, 2) }}
-                        </span>
-                        <span class="muted">{{ $transaction->created_at->diffForHumans() }}</span>
-                    </p>
-                @endforeach
-            @endif
+            <div id="recentList">
+                @if ($recentTransactions->isEmpty())
+                    <div class="activity-empty">
+                        <p>No activity yet.</p>
+                        <p class="activity-hint">Sales and stock updates will appear here once you start recording them.</p>
+                    </div>
+                @else
+                    @foreach ($recentTransactions as $transaction)
+                        <p class="activity-row">
+                            <span>
+                                Sold
+                                @foreach ($transaction->items as $item)
+                                    {{ $item->quantity }}× {{ $item->product->name ?? 'Deleted product' }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                                — ₱{{ number_format($transaction->total, 2) }}
+                            </span>
+                            <span class="muted">{{ $transaction->created_at->diffForHumans() }}</span>
+                        </p>
+                    @endforeach
+                @endif
+            </div>
         </div>
     </div>
 
@@ -115,31 +119,72 @@
                 if (el) el.textContent = value;
             }
 
-            function renderAlerts(alerts) {
-                const list = document.getElementById('alertList');
+            function emptyState(message, hint) {
+                const wrap = document.createElement('div');
+                wrap.className = 'activity-empty';
+                const p = document.createElement('p');
+                p.textContent = message;
+                wrap.appendChild(p);
+                if (hint) {
+                    const h = document.createElement('p');
+                    h.className = 'activity-hint';
+                    h.textContent = hint;
+                    wrap.appendChild(h);
+                }
+                return wrap;
+            }
+
+            function renderRows(listId, rows, empty) {
+                const list = document.getElementById(listId);
                 list.replaceChildren();
 
-                if (alerts.length === 0) {
-                    const wrap = document.createElement('div');
-                    wrap.className = 'activity-empty';
-                    const p = document.createElement('p');
-                    p.textContent = 'No low stock alerts.';
-                    wrap.appendChild(p);
-                    list.appendChild(wrap);
+                if (rows.length === 0) {
+                    list.appendChild(empty);
                     return;
                 }
 
-                alerts.forEach(function(a) {
+                rows.forEach(function(r) {
                     const row = document.createElement('p');
-                    row.className = 'top-row';
-                    const name = document.createElement('span');
-                    name.textContent = a.name;
-                    const meta = document.createElement('span');
-                    meta.className = 'muted';
-                    meta.textContent = a.left + ' left · alerted ' + a.since;
-                    row.append(name, meta);
+                    row.className = r.className;
+                    const left = document.createElement('span');
+                    left.textContent = r.left;
+                    const right = document.createElement('span');
+                    right.className = 'muted';
+                    right.textContent = r.right;
+                    row.append(left, right);
                     list.appendChild(row);
                 });
+            }
+
+            function renderAlerts(alerts) {
+                renderRows('alertList', alerts.map(function(a) {
+                    return {
+                        className: 'top-row',
+                        left: a.name,
+                        right: a.left + ' left · alerted ' + a.since
+                    };
+                }), emptyState('No low stock alerts.'));
+            }
+
+            function renderTop(items) {
+                renderRows('topList', items.map(function(i) {
+                    return {
+                        className: 'top-row',
+                        left: i.name,
+                        right: i.units + ' sold'
+                    };
+                }), emptyState('No sales yet today.'));
+            }
+
+            function renderRecent(items) {
+                renderRows('recentList', items.map(function(t) {
+                    return {
+                        className: 'activity-row',
+                        left: 'Sold ' + t.items + ' — ' + t.total,
+                        right: t.since
+                    };
+                }), emptyState('No activity yet.',
+                    'Sales and stock updates will appear here once you start recording them.'));
             }
 
             async function refresh() {
@@ -164,6 +209,8 @@
                     setText('creditValue', d.credit);
                     setText('utangValue', d.utang_outstanding);
                     renderAlerts(d.alerts);
+                    renderTop(d.top_products);
+                    renderRecent(d.recent);
                 } catch (e) {
                     // Network blip: keep the current numbers and try again next tick.
                 }

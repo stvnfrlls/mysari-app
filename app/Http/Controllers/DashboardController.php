@@ -15,23 +15,8 @@ class DashboardController extends Controller
         $stats = $this->stats();
         $today = $this->today();
         $lowStockAlerts = $this->openAlerts();
-
-        $topProducts = TransactionItem::query()
-            ->whereHas('transaction', function ($query) {
-                $query->active()->whereDate('created_at', today());
-            })
-            ->selectRaw('product_id, SUM(quantity) as units_sold')
-            ->groupBy('product_id')
-            ->orderByDesc('units_sold')
-            ->with('product')
-            ->take(3)
-            ->get();
-
-        $recentTransactions = Transaction::active()
-            ->with(['items.product'])
-            ->latest()
-            ->take(5)
-            ->get();
+        $topProducts = $this->topProducts();
+        $recentTransactions = $this->recentTransactions();
 
         return view('dashboard', compact('stats', 'today', 'topProducts', 'recentTransactions', 'lowStockAlerts'));
     }
@@ -53,6 +38,17 @@ class DashboardController extends Controller
                 'name' => $alert->product->name,
                 'left' => $alert->product->stock_quantity,
                 'since' => $alert->created_at->diffForHumans(),
+            ])->values(),
+            'top_products' => $this->topProducts()->map(fn($row) => [
+                'name' => $row->product->name ?? 'Deleted product',
+                'units' => (int) $row->units_sold,
+            ])->values(),
+            'recent' => $this->recentTransactions()->map(fn($transaction) => [
+                'items' => $transaction->items
+                    ->map(fn($item) => $item->quantity . '× ' . ($item->product->name ?? 'Deleted product'))
+                    ->implode(', '),
+                'total' => '₱' . number_format($transaction->total, 2),
+                'since' => $transaction->created_at->diffForHumans(),
             ])->values(),
         ]);
     }
@@ -87,6 +83,29 @@ class DashboardController extends Controller
     {
         return LowStockAlert::open()
             ->with('product')
+            ->latest()
+            ->take(5)
+            ->get();
+    }
+
+    private function topProducts()
+    {
+        return TransactionItem::query()
+            ->whereHas('transaction', function ($query) {
+                $query->active()->whereDate('created_at', today());
+            })
+            ->selectRaw('product_id, SUM(quantity) as units_sold')
+            ->groupBy('product_id')
+            ->orderByDesc('units_sold')
+            ->with('product')
+            ->take(3)
+            ->get();
+    }
+
+    private function recentTransactions()
+    {
+        return Transaction::active()
+            ->with(['items.product'])
             ->latest()
             ->take(5)
             ->get();
