@@ -47,13 +47,8 @@ class ReportController extends Controller
 
     private function salesData(Request $request): array
     {
-        $from = $request->filled('from')
-            ? Carbon::parse($request->input('from'))->startOfDay()
-            : now()->startOfMonth();
-
-        $to = $request->filled('to')
-            ? Carbon::parse($request->input('to'))->endOfDay()
-            : now()->endOfDay();
+        $from = ($this->parseDate($request->input('from')) ?? now()->startOfMonth())->startOfDay();
+        $to = ($this->parseDate($request->input('to')) ?? now())->endOfDay();
 
         $itemsInRange = fn() => TransactionItem::whereHas('transaction', function ($query) use ($from, $to) {
             $query->active()->whereBetween('created_at', [$from, $to]);
@@ -93,5 +88,18 @@ class ReportController extends Controller
     private function csvSafe(string $value): string
     {
         return preg_match('/^[=+\-@\t\r]/', $value) ? "'" . $value : $value;
+    }
+
+    private function parseDate(mixed $value): ?Carbon
+    {
+        if (! is_string($value) || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            return null;
+        }
+
+        try {
+            return Carbon::createFromFormat('Y-m-d', $value) ?: null;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }
