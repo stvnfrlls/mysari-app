@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/stvnfrlls/mysari-app/compare/v1.17.0...v1.18.0) (2026-10-03)
+
+
+### Features
+
+* add user deactivation and password reset ([2eb068b](https://github.com/stvnfrlls/mysari-app/commit/2eb068bd82db4d68b18792aeef3a6b496f3442f1))
+
 # [1.17.0](https://github.com/stvnfrlls/mysari-app/compare/v1.16.0...v1.17.0) (2026-10-03)
 
 
