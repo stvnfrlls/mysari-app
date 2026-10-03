@@ -1,3 +1,12 @@
+# [1.13.0](https://github.com/stvnfrlls/mysari-app/compare/v1.12.0...v1.13.0) (2026-10-03)
+
+
+### Features
+
+* add main navigation and redirect logged-in users from welcome page to dashboard ([d1e5040](https://github.com/stvnfrlls/mysari-app/commit/d1e504081b86700d8698ed9584800bbde68842ce))
+* add multi-item sales with cart form ([7836c14](https://github.com/stvnfrlls/mysari-app/commit/7836c14a85afc8c65410e968e7690e197d54914b))
+* add product cost price and profit in sales report ([ce47156](https://github.com/stvnfrlls/mysari-app/commit/ce47156dbf92b5f4e943b3d4e57afae87c58a282))
+
 # [1.12.0](https://github.com/stvnfrlls/mysari-app/compare/v1.11.0...v1.12.0) (2026-10-03)
 
 
