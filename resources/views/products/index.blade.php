@@ -21,6 +21,10 @@
             <div class="status-box">{{ session('status') }}</div>
         @endif
 
+        @if ($errors->has('product'))
+            <div class="error-box">{{ $errors->first('product') }}</div>
+        @endif
+
         <form method="GET" action="{{ route('products.index') }}" class="search-form">
             <input type="search" name="q" value="{{ $search }}" placeholder="Search by name or SKU"
                 maxlength="100" aria-label="Search products">
@@ -90,6 +94,16 @@
 
 @section('styles')
     <style>
+        .error-box {
+            background: #2a1212;
+            border: 1px solid #5a2323;
+            border-radius: 6px;
+            color: #f5b5b5;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
         .search-form {
             display: flex;
             gap: 8px;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use App\Models\TransactionItem;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -86,6 +87,12 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        if (TransactionItem::where('product_id', $product->id)->exists()) {
+            return back()->withErrors([
+                'product' => 'This product has sales on record and cannot be deleted.',
+            ]);
+        }
+
         $product->delete();
 
         return redirect()->route('products.index')->with('status', 'Product deleted.');
