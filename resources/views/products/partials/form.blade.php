@@ -10,6 +10,10 @@
 <input type="number" step="0.01" min="0" id="price" name="price"
     value="{{ old('price', $p->price ?? '') }}" required>
 
+<label for="cost_price">Cost (₱)</label>
+<input type="number" step="0.01" min="0" id="cost_price" name="cost_price" placeholder="Optional"
+    value="{{ old('cost_price', $p->cost_price ?? '') }}">
+
 <label for="stock_quantity">Stock Quantity</label>
 <input type="number" min="0" id="stock_quantity" name="stock_quantity"
     value="{{ old('stock_quantity', $p->stock_quantity ?? 0) }}" required>

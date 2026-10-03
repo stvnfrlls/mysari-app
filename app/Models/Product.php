@@ -13,12 +13,14 @@ class Product extends Model
         'name',
         'sku',
         'price',
+        'cost_price',
         'stock_quantity',
         'low_stock_threshold',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'cost_price' => 'decimal:2',
     ];
 
     public function isLowStock(): bool

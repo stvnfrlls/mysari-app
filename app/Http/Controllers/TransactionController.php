@@ -89,6 +89,7 @@ class TransactionController extends Controller
                     'product_id' => $product->id,
                     'quantity' => $quantity,
                     'unit_price' => $product->price,
+                    'unit_cost' => $product->cost_price,
                 ]);
 
                 $product->decrement('stock_quantity', $quantity);
