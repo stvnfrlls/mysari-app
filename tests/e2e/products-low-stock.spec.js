@@ -46,7 +46,7 @@ test.describe('Low stock report', () => {
 
     test('can navigate to low stock from products page', async ({ page }) => {
         await page.goto('/products');
-        await page.getByRole('link', { name: 'Low Stock' }).click();
+        await page.locator('main').getByRole('link', { name: 'Low Stock' }).click();
         await expect(page).toHaveURL('/products/low-stock');
         await expect(page.getByRole('heading', { name: 'Low Stock' })).toBeVisible();
     });

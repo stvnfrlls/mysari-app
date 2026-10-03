@@ -26,8 +26,49 @@
         }
 
         .site-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px 32px;
             padding: 24px 40px;
             border-bottom: 1px solid #1a1a1a;
+        }
+
+        .main-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 4px;
+        }
+
+        .main-nav a {
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #888;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.15s ease, background 0.15s ease;
+        }
+
+        .main-nav a:hover {
+            color: #f5f5f5;
+        }
+
+        .main-nav a.active {
+            color: #f5f5f5;
+            background: #1a1a1a;
+        }
+
+        .main-nav form {
+            margin-left: 8px;
+        }
+
+        .main-nav .logout-button {
+            width: auto;
+            margin: 0;
+            padding: 8px 14px;
         }
 
         .brand {
@@ -282,7 +323,28 @@
 <body>
 
     <header class="site-header">
-        <a href="/" class="brand">{{ config('app.name') }}</a>
+        <a href="{{ auth()->check() ? route('dashboard') : route('landing') }}"
+            class="brand">{{ config('app.name') }}</a>
+
+        @auth
+            <nav class="main-nav" aria-label="Main">
+                <a href="{{ route('dashboard') }}" @class(['active' => request()->routeIs('dashboard')])>Dashboard</a>
+                <a href="{{ route('products.index') }}" @class([
+                    'active' =>
+                        request()->routeIs('products.*') &&
+                        !request()->routeIs('products.low-stock'),
+                ])>Products</a>
+                <a href="{{ route('products.low-stock') }}" @class(['active' => request()->routeIs('products.low-stock')])>Low Stock</a>
+                <a href="{{ route('transactions.create') }}" @class(['active' => request()->routeIs('transactions.create')])>Record Sale</a>
+                <a href="{{ route('transactions.index') }}" @class(['active' => request()->routeIs('transactions.index')])>Transactions</a>
+                <a href="{{ route('customers.index') }}" @class(['active' => request()->routeIs('customers.*')])>Customers</a>
+                <a href="{{ route('reports.sales') }}" @class(['active' => request()->routeIs('reports.*')])>Sales Report</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="logout-button">Log Out</button>
+                </form>
+            </nav>
+        @endauth
     </header>
 
     <main class="@yield('main-class')">

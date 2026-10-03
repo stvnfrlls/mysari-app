@@ -14,7 +14,10 @@ test.describe('Product management', () => {
 
     test('can navigate to products from the dashboard', async ({ page }) => {
         await page.goto('/dashboard');
-        await page.getByRole('link', { name: 'Manage Products' }).click();
+        await page
+            .getByRole('navigation', { name: 'Main' })
+            .getByRole('link', { name: 'Products', exact: true })
+            .click();
         await expect(page).toHaveURL('/products');
         await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();
     });

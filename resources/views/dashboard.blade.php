@@ -9,14 +9,6 @@
                 <h1>Dashboard</h1>
                 <p class="dashboard-subtitle">Welcome back, {{ auth()->user()->name }}</p>
             </div>
-
-            <div class="header-actions">
-                <a href="{{ route('products.index') }}" class="cta-button">Manage Products</a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="logout-button">Log Out</button>
-                </form>
-            </div>
         </div>
 
         <div class="stat-grid">

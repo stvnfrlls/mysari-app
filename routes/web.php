@@ -9,7 +9,7 @@ use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('landing');
+    return auth()->check() ? redirect()->route('dashboard') : view('landing');
 })->name('landing');
 
 Route::middleware('guest')->group(function () {
