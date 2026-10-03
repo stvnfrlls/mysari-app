@@ -31,6 +31,8 @@ jobs:
       run: npx playwright install --with-deps
     - name: Copy .env file
       run: cp .env.example .env
+    - name: Enable the test database switch
+      run: sed -i 's/^TEST_DB_SWITCH=.*/TEST_DB_SWITCH=true/' .env
     - name: Cache Composer dependencies
       uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
