@@ -39,22 +39,20 @@ test.describe('Owner and cashier roles', () => {
 
         await page.goto('/products');
         const productRow = page.locator('tr', { hasText: name });
-        await expect(productRow.getByRole('link', { name: 'Edit' })).toBeVisible();
+        await expect(productRow.getByRole('link', { name: 'Edit' })).toHaveCount(0);
         await expect(productRow.getByRole('button', { name: 'Delete' })).toHaveCount(0);
     });
 
-    test('cashier gets 403 when calling void and delete directly', async ({ page }) => {
+    test('cashier gets 403 when calling void, delete, edit and update directly', async ({ page }) => {
         await login(page, CASHIER_EMAIL);
         const name = `Role Direct Item ${Date.now()}`;
         await createProduct(page, { name, sku: `SKU-RD-${Date.now()}`, price: 30, stock: 10 });
         await recordSale(page, name, 1);
 
-        await page.goto('/products');
-        const editHref = await page
-            .locator('tr', { hasText: name })
-            .getByRole('link', { name: 'Edit' })
-            .getAttribute('href');
-        const productId = editHref.match(/products\/(\d+)\/edit/)[1];
+        await page.goto('/transactions/create');
+        const productId = await page
+            .locator('#product_id option', { hasText: name })
+            .getAttribute('value');
 
         await page.goto('/products/create');
         const token = await page.locator('input[name="_token"]').first().inputValue();
@@ -70,8 +68,25 @@ test.describe('Owner and cashier roles', () => {
         });
         expect(voidRes.status()).toBe(403);
 
+        const edit = await page.request.get(`/products/${productId}/edit`);
+        expect(edit.status()).toBe(403);
+
+        const update = await page.request.post(`/products/${productId}`, {
+            form: {
+                _token: token,
+                _method: 'PATCH',
+                name: 'Hacked',
+                sku: `SKU-HACK-${Date.now()}`,
+                price: '0.01',
+                stock_quantity: '999',
+                low_stock_threshold: '1',
+            },
+        });
+        expect(update.status()).toBe(403);
+
         await page.goto('/products');
         await expect(page.locator('tr', { hasText: name })).toBeVisible();
+        await expect(page.getByText('Hacked')).toHaveCount(0);
     });
 });
 

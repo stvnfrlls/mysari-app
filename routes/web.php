@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::resource('products', ProductController::class)
-        ->except(['show', 'destroy']);
+        ->only(['index', 'create', 'store']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])
         ->name('products.destroy')
         ->middleware('role:owner');
@@ -34,8 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
-    Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
-    Route::get('/reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
+    Route::middleware('role:owner')->group(function () {
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::match(['put', 'patch'], '/products/{product}', [ProductController::class, 'update'])->name('products.update');
+
+        Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+        Route::get('/reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
+    });
 
     Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])
         ->name('transactions.void')

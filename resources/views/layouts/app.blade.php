@@ -382,8 +382,8 @@
                 <a href="{{ route('transactions.create') }}" @class(['active' => request()->routeIs('transactions.create')])>Record Sale</a>
                 <a href="{{ route('transactions.index') }}" @class(['active' => request()->routeIs('transactions.index')])>Transactions</a>
                 <a href="{{ route('customers.index') }}" @class(['active' => request()->routeIs('customers.*')])>Customers</a>
-                <a href="{{ route('reports.sales') }}" @class(['active' => request()->routeIs('reports.*')])>Sales Report</a>
                 @role('owner')
+                    <a href="{{ route('reports.sales') }}" @class(['active' => request()->routeIs('reports.*')])>Sales Report</a>
                     <a href="{{ route('users.index') }}" @class(['active' => request()->routeIs('users.*')])>Users</a>
                 @endrole
                 <form method="POST" action="{{ route('logout') }}">

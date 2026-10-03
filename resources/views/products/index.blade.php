@@ -69,7 +69,9 @@
                                     @endif
                                 </td>
                                 <td class="actions">
-                                    <a href="{{ route('products.edit', $product) }}">Edit</a>
+                                    @role('owner')
+                                        <a href="{{ route('products.edit', $product) }}">Edit</a>
+                                    @endrole
                                     @role('owner')
                                         <form method="POST" action="{{ route('products.destroy', $product) }}"
                                             onsubmit="return confirm('Delete this product?')">

@@ -55,7 +55,9 @@
                                         <button type="submit" class="restock-button">Restock</button>
                                     </form>
                                     <a href="{{ route('products.history', $product) }}" class="row-link">History</a>
-                                    <a href="{{ route('products.edit', $product) }}" class="row-link">Edit</a>
+                                    @role('owner')
+                                        <a href="{{ route('products.edit', $product) }}" class="row-link">Edit</a>
+                                    @endrole
                                 </td>
                             </tr>
                         @endforeach
