@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/stvnfrlls/mysari-app/compare/v1.21.0...v1.22.0) (2026-10-03)
+
+
+### Features
+
+* add cash and credit split, utang total and top sellers to the dashboard ([d40d0f4](https://github.com/stvnfrlls/mysari-app/commit/d40d0f4997e77724e9d4ddacc81e9740b288aa68))
+
 # [1.21.0](https://github.com/stvnfrlls/mysari-app/compare/v1.20.0...v1.21.0) (2026-10-03)
 
 
