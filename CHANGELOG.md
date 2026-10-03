@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/stvnfrlls/mysari-app/compare/v1.16.0...v1.17.0) (2026-10-03)
+
+
+### Features
+
+* add CSV export for the sales report ([d82a928](https://github.com/stvnfrlls/mysari-app/commit/d82a9282ef1c5f839f917fba2e81a7af0617cae4))
+
 # [1.16.0](https://github.com/stvnfrlls/mysari-app/compare/v1.15.0...v1.16.0) (2026-10-03)
 
 
