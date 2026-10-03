@@ -4,7 +4,7 @@ import { promisify } from 'util';
 const run = promisify(exec);
 
 export default async function globalSetup() {
-    const workers = Math.min(Number(process.env.PW_WORKERS || 1), 8);
+    const workers = Math.min(Number(process.env.PW_WORKERS || 4), 8);
 
     await Promise.all(Array.from({ length: workers }, (_, i) => prepare(i)));
 }
