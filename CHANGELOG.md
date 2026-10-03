@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/stvnfrlls/mysari-app/compare/v1.23.0...v1.23.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* ignore invalid report dates instead of returning a 500 ([961007d](https://github.com/stvnfrlls/mysari-app/commit/961007d5797123ed0e55a3c812423ba6851b16a6))
+
 # [1.23.0](https://github.com/stvnfrlls/mysari-app/compare/v1.22.1...v1.23.0) (2026-10-03)
 
 
