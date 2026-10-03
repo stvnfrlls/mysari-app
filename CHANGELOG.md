@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/stvnfrlls/mysari-app/compare/v1.18.0...v1.19.0) (2026-10-03)
+
+
+### Features
+
+* add customer edit and owner-only delete ([a8c3626](https://github.com/stvnfrlls/mysari-app/commit/a8c36261a2e0bc0ad9bc843bb5980a0d41f2dd54))
+
 # [1.18.0](https://github.com/stvnfrlls/mysari-app/compare/v1.17.0...v1.18.0) (2026-10-03)
 
 
