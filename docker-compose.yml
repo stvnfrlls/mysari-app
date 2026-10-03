@@ -25,6 +25,18 @@ services:
     networks:
       - app-network
 
+  scheduler:
+    image: ${IMAGE_NAME}:latest
+    restart: unless-stopped
+    command: ["su", "-s", "/bin/sh", "www-data", "-c", "php artisan schedule:work"]
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - app
+      - db
+    networks:
+      - app-network
+
   webserver:
     image: nginx:1.27-alpine
     container_name: ${APP_NAME}-nginx
