@@ -9,11 +9,22 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::orderBy('name')->get();
+        $search = trim((string) $request->query('q', ''));
 
-        return view('products.index', compact('products'));
+        $products = Product::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $term = '%' . addcslashes($search, '%_\\') . '%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', $term)
+                        ->orWhere('sku', 'like', $term);
+                });
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('products.index', compact('products', 'search'));
     }
 
     public function create()

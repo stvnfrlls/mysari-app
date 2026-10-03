@@ -21,11 +21,25 @@
             <div class="status-box">{{ session('status') }}</div>
         @endif
 
+        <form method="GET" action="{{ route('products.index') }}" class="search-form">
+            <input type="search" name="q" value="{{ $search }}" placeholder="Search by name or SKU"
+                maxlength="100" aria-label="Search products">
+            <button type="submit" class="form-button">Search</button>
+            @if ($search !== '')
+                <a href="{{ route('products.index') }}" class="clear-link">Clear</a>
+            @endif
+        </form>
+
         <div class="table-panel">
             @if ($products->isEmpty())
                 <div class="empty-state">
-                    <p>No products yet.</p>
-                    <p class="empty-hint">Add your first product to start tracking inventory.</p>
+                    @if ($search !== '')
+                        <p>No products match "{{ $search }}".</p>
+                        <p class="empty-hint">Try a different name or SKU.</p>
+                    @else
+                        <p>No products yet.</p>
+                        <p class="empty-hint">Add your first product to start tracking inventory.</p>
+                    @endif
                 </div>
             @else
                 <table>
@@ -68,4 +82,49 @@
             @endif
         </div>
     </div>
+@endsection
+
+@section('styles')
+    <style>
+        .search-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-form input {
+            flex: 1;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            color: #eee;
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .form-button {
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            color: #eee;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .form-button:hover {
+            background: #1a1a1a;
+        }
+
+        .clear-link {
+            color: #888;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .clear-link:hover {
+            color: #f5f5f5;
+        }
+    </style>
 @endsection
