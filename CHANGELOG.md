@@ -1,3 +1,11 @@
+# [1.12.0](https://github.com/stvnfrlls/mysari-app/compare/v1.11.0...v1.12.0) (2026-10-03)
+
+
+### Features
+
+* add utang (credit) tracking with customers and payments ([f587d8c](https://github.com/stvnfrlls/mysari-app/commit/f587d8c947981f809d170ccfe8df289594d3200a))
+* add void sale, restock, and stock movement history ([1328723](https://github.com/stvnfrlls/mysari-app/commit/1328723e54be5af10bb156d2d4018868f5442e59))
+
 # [1.11.0](https://github.com/stvnfrlls/mysari-app/compare/v1.10.0...v1.11.0) (2026-09-27)
 
 
