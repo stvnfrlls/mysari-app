@@ -14,8 +14,18 @@
             <div class="header-actions">
                 <a href="{{ route('reports.sales.export', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')]) }}"
                     class="cta-button-secondary" id="exportCsv">Export CSV</a>
+                <form method="POST" action="{{ route('reports.sales.exports.store') }}" style="margin:0;">
+                    @csrf
+                    <input type="hidden" name="from" value="{{ $from->format('Y-m-d') }}">
+                    <input type="hidden" name="to" value="{{ $to->format('Y-m-d') }}">
+                    <button type="submit" class="cta-button-secondary" id="queueExport">Queue export</button>
+                </form>
             </div>
         </div>
+
+        @if (session('status'))
+            <div class="status-box">{{ session('status') }}</div>
+        @endif
 
         <form method="GET" action="{{ route('reports.sales') }}"
             style="display:flex; gap:12px; margin-bottom:24px; align-items:flex-end;">
@@ -100,5 +110,71 @@
                 </table>
             @endif
         </div>
+
+        <div id="exportList" style="margin-top:24px;">
+            @if ($exports->isNotEmpty())
+                <div class="table-panel">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Recent exports</th>
+                                <th>Requested</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($exports as $export)
+                                <tr class="export-row" data-status="{{ $export->status }}">
+                                    <td>{{ $export->from_date->format('M j, Y') }} –
+                                        {{ $export->to_date->format('M j, Y') }}</td>
+                                    <td>{{ $export->created_at->diffForHumans() }}</td>
+                                    <td class="export-status">{{ ucfirst($export->status) }}</td>
+                                    <td>
+                                        @if ($export->isReady())
+                                            <a href="{{ route('reports.sales.exports.download', $export) }}"
+                                                class="export-download">Download</a>
+                                        @elseif ($export->status === 'failed')
+                                            <span class="muted">{{ $export->error }}</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
     </div>
+
+    <script>
+        (function() {
+            function hasPending() {
+                return document.querySelector('#exportList .export-row[data-status="pending"]') !== null;
+            }
+
+            if (!hasPending()) return;
+
+            const timer = setInterval(async function() {
+                try {
+                    const res = await fetch(window.location.href, {
+                        headers: {
+                            'Accept': 'text/html'
+                        },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) return;
+
+                    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+                    const fresh = doc.getElementById('exportList');
+                    if (fresh) {
+                        document.getElementById('exportList').replaceWith(fresh);
+                    }
+                    if (!hasPending()) clearInterval(timer);
+                } catch (e) {
+                    // Network blip: try again next tick.
+                }
+            }, 3000);
+        })();
+    </script>
 @endsection

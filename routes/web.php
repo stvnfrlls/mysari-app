@@ -70,5 +70,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
         Route::patch('/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
         Route::patch('/users/{user}/password', [UserController::class, 'resetPassword'])->name('users.password');
+
+        Route::get('/reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
+        Route::post('/reports/sales/exports', [ReportController::class, 'requestExport'])->name('reports.sales.exports.store');
+        Route::get('/reports/sales/exports/{export}/download', [ReportController::class, 'downloadExport'])->name('reports.sales.exports.download');
     });
 });

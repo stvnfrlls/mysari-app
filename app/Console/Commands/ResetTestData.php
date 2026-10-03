@@ -22,6 +22,7 @@ class ResetTestData extends Command
         DB::table('transaction_items')->truncate();
         DB::table('transactions')->truncate();
         DB::table('low_stock_alerts')->truncate();
+        DB::table('report_exports')->truncate();
         DB::table('jobs')->truncate();
         DB::table('customers')->truncate();
         DB::table('products')->truncate();

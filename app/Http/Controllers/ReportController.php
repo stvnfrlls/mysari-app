@@ -2,92 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
-use App\Models\TransactionItem;
+use App\Jobs\BuildSalesExport;
+use App\Models\ReportExport;
+use App\Services\SalesReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
     public function sales(Request $request)
     {
-        [$from, $to, $summary, $productBreakdown] = $this->salesData($request);
+        [$from, $to] = $this->range($request);
+        [$summary, $productBreakdown] = SalesReport::data($from, $to);
 
-        return view('reports.sales', compact('summary', 'productBreakdown', 'from', 'to'));
+        $exports = ReportExport::where('user_id', $request->user()->id)
+            ->latest('id')
+            ->take(5)
+            ->get();
+
+        return view('reports.sales', compact('summary', 'productBreakdown', 'from', 'to', 'exports'));
     }
 
     public function exportSales(Request $request)
     {
-        [$from, $to,, $productBreakdown] = $this->salesData($request);
+        [$from, $to] = $this->range($request);
+        [, $productBreakdown] = SalesReport::data($from, $to);
 
         $filename = sprintf('sales-report-%s-to-%s.csv', $from->format('Y-m-d'), $to->format('Y-m-d'));
 
         return response()->streamDownload(function () use ($productBreakdown) {
             $out = fopen('php://output', 'w');
-            fwrite($out, "\xEF\xBB\xBF");
-            fputcsv($out, ['Product', 'Units Sold', 'Revenue', 'Cost', 'Profit'], ',', '"', '');
-
-            foreach ($productBreakdown as $row) {
-                $hasCost = $row->total_cost !== null;
-
-                fputcsv($out, [
-                    $this->csvSafe($row->product->name ?? 'Deleted product'),
-                    $row->total_quantity,
-                    number_format((float) $row->total_revenue, 2, '.', ''),
-                    $hasCost ? number_format((float) $row->total_cost, 2, '.', '') : '',
-                    $hasCost
-                        ? number_format((float) $row->costed_revenue - (float) $row->total_cost, 2, '.', '')
-                        : '',
-                ], ',', '"', '');
-            }
-
+            SalesReport::writeCsv($out, $productBreakdown);
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    private function salesData(Request $request): array
+    public function requestExport(Request $request)
+    {
+        [$from, $to] = $this->range($request);
+
+        $export = ReportExport::create([
+            'user_id' => $request->user()->id,
+            'from_date' => $from->toDateString(),
+            'to_date' => $to->toDateString(),
+        ]);
+
+        BuildSalesExport::dispatch($export->id);
+
+        return redirect()
+            ->route('reports.sales', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')])
+            ->with('status', 'Export queued. It will appear below when it is ready.');
+    }
+
+    public function downloadExport(Request $request, ReportExport $export)
+    {
+        abort_unless($export->user_id === $request->user()->id, 403);
+        abort_unless($export->isReady() && Storage::disk('local')->exists($export->path), 404);
+
+        return Storage::disk('local')->download($export->path, $export->filename(), [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    private function range(Request $request): array
     {
         $from = ($this->parseDate($request->input('from')) ?? now()->startOfMonth())->startOfDay();
         $to = ($this->parseDate($request->input('to')) ?? now())->endOfDay();
 
-        $itemsInRange = fn() => TransactionItem::whereHas('transaction', function ($query) use ($from, $to) {
-            $query->active()->whereBetween('created_at', [$from, $to]);
-        });
-
-        $totals = $itemsInRange()
-            ->selectRaw('SUM(CASE WHEN unit_cost IS NOT NULL THEN quantity * unit_price END) as costed_revenue')
-            ->selectRaw('SUM(CASE WHEN unit_cost IS NOT NULL THEN quantity * unit_cost END) as total_cost')
-            ->selectRaw('SUM(CASE WHEN unit_cost IS NULL THEN 1 ELSE 0 END) as uncosted_lines')
-            ->first();
-
-        $totalCost = $totals->total_cost !== null ? (float) $totals->total_cost : null;
-
-        $summary = [
-            'total_revenue' => Transaction::active()->whereBetween('created_at', [$from, $to])->sum('total'),
-            'transaction_count' => Transaction::active()->whereBetween('created_at', [$from, $to])->count(),
-            'total_cost' => $totalCost,
-            'profit' => $totalCost !== null ? (float) $totals->costed_revenue - $totalCost : null,
-            'uncosted_lines' => (int) $totals->uncosted_lines,
-        ];
-
-        $productBreakdown = $itemsInRange()
-            ->selectRaw('product_id')
-            ->selectRaw('SUM(quantity) as total_quantity')
-            ->selectRaw('SUM(quantity * unit_price) as total_revenue')
-            ->selectRaw('SUM(CASE WHEN unit_cost IS NOT NULL THEN quantity END) as costed_quantity')
-            ->selectRaw('SUM(CASE WHEN unit_cost IS NOT NULL THEN quantity * unit_price END) as costed_revenue')
-            ->selectRaw('SUM(CASE WHEN unit_cost IS NOT NULL THEN quantity * unit_cost END) as total_cost')
-            ->groupBy('product_id')
-            ->with('product')
-            ->orderByDesc('total_revenue')
-            ->get();
-
-        return [$from, $to, $summary, $productBreakdown];
-    }
-
-    private function csvSafe(string $value): string
-    {
-        return preg_match('/^[=+\-@\t\r]/', $value) ? "'" . $value : $value;
+        return [$from, $to];
     }
 
     private function parseDate(mixed $value): ?Carbon
