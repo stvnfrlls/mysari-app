@@ -3,6 +3,10 @@
 @section('title', 'Record Sale')
 
 @section('content')
+    @php
+        $rows = array_values(old('items', [['product_id' => '', 'quantity' => 1]]));
+    @endphp
+
     <div class="form-card">
         <h1>Record Sale</h1>
 
@@ -13,20 +17,18 @@
         <form method="POST" action="{{ route('transactions.store') }}">
             @csrf
 
-            <label for="product_id">Product</label>
-            <select id="product_id" name="product_id" required>
-                <option value="">Select a product</option>
-                @foreach ($products as $product)
-                    <option value="{{ $product->id }}" data-price="{{ $product->price }}"
-                        data-stock="{{ $product->stock_quantity }}">
-                        {{ $product->name }} — ₱{{ number_format($product->price, 2) }} ({{ $product->stock_quantity }} in
-                        stock)
-                    </option>
+            <div id="itemRows">
+                @foreach ($rows as $i => $row)
+                    @include('transactions._item-row', [
+                        'index' => $i,
+                        'row' => $row,
+                        'products' => $products,
+                        'first' => $loop->first,
+                    ])
                 @endforeach
-            </select>
+            </div>
 
-            <label for="quantity">Quantity</label>
-            <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+            <button type="button" id="addItem" class="add-item">+ Add item</button>
 
             <div class="credit-row">
                 <input type="checkbox" id="is_credit" name="is_credit" value="1"
@@ -48,35 +50,75 @@
 
             <p class="line-total" id="lineTotal"></p>
 
-            <button type="submit">Record Sale</button>
+            <button type="submit" class="submit-button">Record Sale</button>
         </form>
     </div>
 
+    <template id="itemRowTemplate">
+        @include('transactions._item-row', [
+            'index' => '__INDEX__',
+            'row' => [],
+            'products' => $products,
+            'first' => false,
+        ])
+    </template>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const select = document.getElementById('product_id');
-            const qty = document.getElementById('quantity');
+            const rowsEl = document.getElementById('itemRows');
+            const template = document.getElementById('itemRowTemplate');
+            const addBtn = document.getElementById('addItem');
             const lineTotal = document.getElementById('lineTotal');
 
             const isCredit = document.getElementById('is_credit');
             const customerField = document.getElementById('customerField');
             const customerSelect = document.getElementById('customer_id');
 
+            let nextIndex = rowsEl.querySelectorAll('.item-row').length;
+
             function updateTotal() {
-                const opt = select.options[select.selectedIndex];
-                const price = parseFloat(opt?.dataset.price || 0);
-                const q = parseInt(qty.value || 0);
-                lineTotal.textContent = price && q ? `Total: ₱${(price * q).toFixed(2)}` : '';
+                let total = 0;
+                let any = false;
+
+                rowsEl.querySelectorAll('.item-row').forEach(row => {
+                    const opt = row.querySelector('.item-product').selectedOptions[0];
+                    const price = parseFloat(opt?.dataset.price || 0);
+                    const q = parseInt(row.querySelector('.item-quantity').value || 0);
+                    if (price && q) {
+                        total += price * q;
+                        any = true;
+                    }
+                });
+
+                lineTotal.textContent = any ? `Total: ₱${total.toFixed(2)}` : '';
             }
 
-            select.addEventListener('change', updateTotal);
-            qty.addEventListener('input', updateTotal);
+            addBtn.addEventListener('click', () => {
+                rowsEl.insertAdjacentHTML(
+                    'beforeend',
+                    template.innerHTML.replaceAll('__INDEX__', nextIndex++)
+                );
+                updateTotal();
+            });
+
+            rowsEl.addEventListener('click', event => {
+                const remove = event.target.closest('.remove-item');
+                if (remove) {
+                    remove.closest('.item-row').remove();
+                    updateTotal();
+                }
+            });
+
+            rowsEl.addEventListener('change', updateTotal);
+            rowsEl.addEventListener('input', updateTotal);
 
             isCredit.addEventListener('change', () => {
                 customerField.hidden = !isCredit.checked;
                 customerSelect.disabled = !isCredit.checked;
                 customerSelect.required = isCredit.checked;
             });
+
+            updateTotal();
         });
     </script>
 @endsection
@@ -90,7 +132,7 @@
 
         .form-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 560px;
             margin: 0 auto;
             background: #111111;
             border: 1px solid #1f1f1f;
@@ -117,6 +159,50 @@
             outline: none;
         }
 
+        .item-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .item-product-field {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-quantity-field {
+            width: 90px;
+        }
+
+        .remove-item {
+            width: 40px;
+            height: 44px;
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #e5484d;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .add-item {
+            width: 100%;
+            margin-top: 16px;
+            padding: 10px;
+            background: transparent;
+            border: 1px dashed #2a2a2a;
+            border-radius: 8px;
+            color: #999;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .add-item:hover {
+            background: #1a1a1a;
+        }
+
         .credit-row {
             display: flex;
             align-items: center;
@@ -138,7 +224,7 @@
             color: #999;
         }
 
-        button {
+        .submit-button {
             width: 100%;
             margin-top: 28px;
             padding: 13px;

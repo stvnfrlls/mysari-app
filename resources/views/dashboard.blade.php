@@ -47,13 +47,18 @@
                 </div>
             @else
                 @foreach ($recentTransactions as $transaction)
-                    @foreach ($transaction->items as $item)
-                        <p class="activity-row">
-                            Sold {{ $item->quantity }}× {{ $item->product->name ?? 'Deleted product' }} —
-                            ₱{{ number_format($transaction->total, 2) }}
-                            <span class="muted">{{ $transaction->created_at->diffForHumans() }}</span>
-                        </p>
-                    @endforeach
+                    <p class="activity-row">
+                        <span>
+                            Sold
+                            @foreach ($transaction->items as $item)
+                                {{ $item->quantity }}× {{ $item->product->name ?? 'Deleted product' }}@if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                            — ₱{{ number_format($transaction->total, 2) }}
+                        </span>
+                        <span class="muted">{{ $transaction->created_at->diffForHumans() }}</span>
+                    </p>
                 @endforeach
             @endif
         </div>

@@ -26,8 +26,7 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Product</th>
-                            <th>Qty</th>
+                            <th>Items</th>
                             <th>Total</th>
                             <th>Recorded By</th>
                             <th></th>
@@ -35,29 +34,27 @@
                     </thead>
                     <tbody>
                         @foreach ($transactions as $transaction)
-                            @foreach ($transaction->items as $item)
-                                <tr @class(['voided' => $transaction->isVoided()])>
-                                    <td class="muted">{{ $transaction->created_at->format('M j, Y g:i A') }}</td>
-                                    <td>{{ $item->product->name ?? 'Deleted product' }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>₱{{ number_format($transaction->total, 2) }}</td>
-                                    <td class="muted">{{ $transaction->user->name }}</td>
-                                    <td class="actions">
-                                        @if ($loop->first)
-                                            @if ($transaction->isVoided())
-                                                <span class="badge-voided"
-                                                    title="{{ $transaction->void_reason }}">Voided</span>
-                                            @else
-                                                <form method="POST" action="{{ route('transactions.void', $transaction) }}"
-                                                    onsubmit="return confirm('Void this sale and restore stock?')">
-                                                    @csrf
-                                                    <button type="submit" class="void-button">Void</button>
-                                                </form>
-                                            @endif
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
+                            <tr @class(['voided' => $transaction->isVoided()])>
+                                <td class="muted">{{ $transaction->created_at->format('M j, Y g:i A') }}</td>
+                                <td>
+                                    @foreach ($transaction->items as $item)
+                                        <div>{{ $item->product->name ?? 'Deleted product' }} × {{ $item->quantity }}</div>
+                                    @endforeach
+                                </td>
+                                <td>₱{{ number_format($transaction->total, 2) }}</td>
+                                <td class="muted">{{ $transaction->user->name }}</td>
+                                <td class="actions">
+                                    @if ($transaction->isVoided())
+                                        <span class="badge-voided" title="{{ $transaction->void_reason }}">Voided</span>
+                                    @else
+                                        <form method="POST" action="{{ route('transactions.void', $transaction) }}"
+                                            onsubmit="return confirm('Void this sale and restore stock?')">
+                                            @csrf
+                                            <button type="submit" class="void-button">Void</button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>

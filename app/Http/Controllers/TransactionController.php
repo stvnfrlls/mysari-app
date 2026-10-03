@@ -32,53 +32,78 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'quantity' => ['required', 'integer', 'min:1'],
+            'items' => ['required', 'array', 'min:1', 'max:50'],
+            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
             'is_credit' => ['nullable', 'boolean'],
             'customer_id' => ['required_if:is_credit,1', 'nullable', 'exists:customers,id'],
         ]);
 
         $isCredit = $request->boolean('is_credit');
-        $available = null;
 
-        DB::transaction(function () use ($validated, $request, $isCredit, &$available) {
-            $product = Product::whereKey($validated['product_id'])
+        // Merge duplicate products so the stock check sees the combined quantity.
+        $lines = collect($validated['items'])
+            ->groupBy('product_id')
+            ->map(fn($rows) => (int) $rows->sum('quantity'));
+
+        $error = null;
+
+        DB::transaction(function () use ($lines, $validated, $request, $isCredit, &$error) {
+            $products = Product::whereIn('id', $lines->keys())
+                ->orderBy('id')
                 ->lockForUpdate()
-                ->firstOrFail();
+                ->get()
+                ->keyBy('id');
 
-            if ($validated['quantity'] > $product->stock_quantity) {
-                $available = $product->stock_quantity;
-                return;
+            abort_if($products->count() !== $lines->count(), 422, 'A selected product no longer exists.');
+
+            foreach ($lines as $productId => $quantity) {
+                $product = $products[$productId];
+
+                if ($quantity > $product->stock_quantity) {
+                    $error = $lines->count() > 1
+                        ? "Not enough stock for {$product->name}. Only {$product->stock_quantity} available."
+                        : "Not enough stock. Only {$product->stock_quantity} available.";
+
+                    return;
+                }
+            }
+
+            $total = 0;
+            foreach ($lines as $productId => $quantity) {
+                $total += $products[$productId]->price * $quantity;
             }
 
             $transaction = Transaction::create([
                 'user_id' => $request->user()->id,
-                'total' => $product->price * $validated['quantity'],
+                'total' => round($total, 2),
                 'is_credit' => $isCredit,
                 'customer_id' => $isCredit ? $validated['customer_id'] : null,
             ]);
 
-            TransactionItem::create([
-                'transaction_id' => $transaction->id,
-                'product_id' => $product->id,
-                'quantity' => $validated['quantity'],
-                'unit_price' => $product->price,
-            ]);
+            foreach ($lines as $productId => $quantity) {
+                $product = $products[$productId];
 
-            $product->decrement('stock_quantity', $validated['quantity']);
+                TransactionItem::create([
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'unit_price' => $product->price,
+                ]);
 
-            StockMovement::create([
-                'product_id' => $product->id,
-                'transaction_id' => $transaction->id,
-                'type' => 'sale',
-                'quantity_change' => -$validated['quantity'],
-            ]);
+                $product->decrement('stock_quantity', $quantity);
+
+                StockMovement::create([
+                    'product_id' => $product->id,
+                    'transaction_id' => $transaction->id,
+                    'type' => 'sale',
+                    'quantity_change' => -$quantity,
+                ]);
+            }
         });
 
-        if ($available !== null) {
-            return back()
-                ->withInput()
-                ->withErrors(['quantity' => 'Not enough stock. Only ' . $available . ' available.']);
+        if ($error !== null) {
+            return back()->withInput()->withErrors(['items' => $error]);
         }
 
         return redirect()->route('transactions.index')->with('status', 'Sale recorded.');
