@@ -109,6 +109,67 @@ test.describe('User deactivation and password reset', () => {
         });
         expect(password.status()).toBe(403);
     });
+
+    test('resetting a password logs out that user\'s other sessions', async ({ page, browser }) => {
+        const email = `sess-${Date.now()}@example.com`;
+
+        await login(page, OWNER_EMAIL);
+        await page.goto('/users');
+        await addUser(page, { name: 'Sess Me', email, role: 'cashier' });
+
+        const otherContext = await browser.newContext({ baseURL: BASE_URL });
+        await otherContext.addCookies([{ name: 'test_db', value: workerDb(), url: BASE_URL }]);
+        const otherPage = await otherContext.newPage();
+        await login(otherPage, email);
+
+        const row = page.locator('tr', { hasText: email });
+        await row.getByPlaceholder('New password').fill('newpassword456');
+        await row.getByRole('button', { name: 'Reset' }).click();
+        await expect(page.getByText('Password reset.')).toBeVisible();
+
+        await otherPage.goto('/dashboard');
+        await expect(otherPage).toHaveURL('/login');
+
+        await otherContext.close();
+    });
+
+    test('an owner who resets their own password stays signed in', async ({ page, browser }) => {
+        const email = `selfreset-${Date.now()}@example.com`;
+
+        await login(page, OWNER_EMAIL);
+        await page.goto('/users');
+        await addUser(page, { name: 'Self Reset', email, role: 'owner' });
+
+        const ownerContext = await browser.newContext({ baseURL: BASE_URL });
+        await ownerContext.addCookies([{ name: 'test_db', value: workerDb(), url: BASE_URL }]);
+        const ownerPage = await ownerContext.newPage();
+        await login(ownerPage, email);
+
+        await ownerPage.goto('/users');
+        const row = ownerPage.locator('tr', { hasText: email });
+        await row.getByPlaceholder('New password').fill('newpassword456');
+        await row.getByRole('button', { name: 'Reset' }).click();
+        await expect(ownerPage.getByText('Password reset.')).toBeVisible();
+
+        await ownerPage.goto('/dashboard');
+        await expect(ownerPage).toHaveURL('/dashboard');
+
+        await ownerContext.close();
+    });
+
+    test('a weak password is rejected on reset', async ({ page }) => {
+        const email = `weak-${Date.now()}@example.com`;
+
+        await login(page, OWNER_EMAIL);
+        await page.goto('/users');
+        await addUser(page, { name: 'Weak Pass', email, role: 'cashier' });
+
+        const row = page.locator('tr', { hasText: email });
+        await row.getByPlaceholder('New password').fill('onlyletters');
+        await row.getByRole('button', { name: 'Reset' }).click();
+
+        await expect(page.getByText('Password reset.')).toHaveCount(0);
+    });
 });
 
 async function tryLogin(page, email, password) {

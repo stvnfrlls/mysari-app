@@ -23,7 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(
             prepend: [\App\Http\Middleware\UseTestDatabase::class],
-            append: [\App\Http\Middleware\EnsureUserIsActive::class],
+            append: [
+                \Illuminate\Session\Middleware\AuthenticateSession::class,
+                \App\Http\Middleware\EnsureUserIsActive::class,
+            ],
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
