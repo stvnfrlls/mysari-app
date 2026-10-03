@@ -59,6 +59,10 @@
                 </table>
             @endif
         </div>
+
+        <div class="pagination">
+            {{ $customers->links() }}
+        </div>
     </div>
 @endsection
 
@@ -96,6 +100,10 @@
         .row-link {
             color: #888;
             font-size: 12px;
+        }
+
+        .pagination {
+            margin-top: 20px;
         }
     </style>
 @endsection

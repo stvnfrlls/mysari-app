@@ -14,7 +14,7 @@ class CustomerController extends Controller
             ->withSum(['transactions as credit_total' => fn($q) => $q->active()->where('is_credit', true)], 'total')
             ->withSum('payments as paid_total', 'amount')
             ->orderBy('name')
-            ->get();
+            ->paginate(20);
 
         return view('customers.index', compact('customers'));
     }
