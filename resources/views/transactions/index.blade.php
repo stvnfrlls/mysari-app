@@ -47,11 +47,13 @@
                                     @if ($transaction->isVoided())
                                         <span class="badge-voided" title="{{ $transaction->void_reason }}">Voided</span>
                                     @else
-                                        <form method="POST" action="{{ route('transactions.void', $transaction) }}"
-                                            onsubmit="return confirm('Void this sale and restore stock?')">
-                                            @csrf
-                                            <button type="submit" class="void-button">Void</button>
-                                        </form>
+                                        @role('owner')
+                                            <form method="POST" action="{{ route('transactions.void', $transaction) }}"
+                                                onsubmit="return confirm('Void this sale and restore stock?')">
+                                                @csrf
+                                                <button type="submit" class="void-button">Void</button>
+                                            </form>
+                                        @endrole
                                     @endif
                                 </td>
                             </tr>

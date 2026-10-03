@@ -23,7 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::resource('products', ProductController::class)
-        ->except(['show']);
+        ->except(['show', 'destroy']);
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])
+        ->name('products.destroy')
+        ->middleware('role:owner');
     Route::get('/products/low-stock', [ProductController::class, 'lowStock'])->name('products.low-stock');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
@@ -33,7 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
 
     Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])
-        ->name('transactions.void');
+        ->name('transactions.void')
+        ->middleware('role:owner');
 
     Route::post('/products/{product}/restock', [ProductController::class, 'restock'])->name('products.restock');
     Route::get('/products/{product}/history', [ProductController::class, 'history'])->name('products.history');
