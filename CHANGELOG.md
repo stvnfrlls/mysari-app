@@ -1,3 +1,18 @@
+## [1.22.1](https://github.com/stvnfrlls/mysari-app/compare/v1.22.0...v1.22.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* cap product price and stock values ([7a71864](https://github.com/stvnfrlls/mysari-app/commit/7a718643ebfb9eaca2eea991fb5247d7239c6f20))
+* default APP_DEBUG to false in .env.example ([3a6c0e8](https://github.com/stvnfrlls/mysari-app/commit/3a6c0e8a79f40bbff1a96cdfe0eb7415c9d5ecd8))
+* end other sessions on password reset and require letters and numbers ([50e369b](https://github.com/stvnfrlls/mysari-app/commit/50e369bcce7560fca4dc74fb8c75e57ac0f407db))
+* publish mysql port on localhost only ([5d17c29](https://github.com/stvnfrlls/mysari-app/commit/5d17c29658065144c20d08c05f9d02ee2435ed57))
+* refuse sales whose total exceeds the column limit ([77c6117](https://github.com/stvnfrlls/mysari-app/commit/77c611758f51ef2f7a227a926cad7c7dac7c9b94))
+* refuse to delete a product that has sales ([495988b](https://github.com/stvnfrlls/mysari-app/commit/495988bbd3921f776e1d84350ab0e4ecdd0f0b2b))
+* restrict product edit and sales reports to owners ([9fe7dab](https://github.com/stvnfrlls/mysari-app/commit/9fe7dab645004e88a0abc16394542c44a0cbce42))
+* restrict test database switch to local and testing environments ([7e11dfb](https://github.com/stvnfrlls/mysari-app/commit/7e11dfbd8b353d9c81d0191ec8c8d84efa79b6fc))
+* throttle login attempts per email and IP ([9faff30](https://github.com/stvnfrlls/mysari-app/commit/9faff307aad40aafc13dcf95c30d75c66e8eefc2))
+
 # [1.22.0](https://github.com/stvnfrlls/mysari-app/compare/v1.21.0...v1.22.0) (2026-10-03)
 
 
