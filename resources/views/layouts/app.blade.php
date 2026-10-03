@@ -316,6 +316,50 @@
         tr:last-child td {
             border-bottom: none;
         }
+
+        .pager {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pager-info {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .pager-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .pager-item {
+            padding: 6px 12px;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        a.pager-item:hover {
+            background: #1a1a1a;
+            color: #f5f5f5;
+        }
+
+        .pager-item.current {
+            background: #f5f5f5;
+            color: #0a0a0a;
+            border-color: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .pager-item.disabled {
+            color: #555;
+        }
     </style>
     @yield('styles')
 </head>

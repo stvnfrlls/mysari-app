@@ -81,6 +81,10 @@
                 </table>
             @endif
         </div>
+
+        <div class="pagination">
+            {{ $products->links() }}
+        </div>
     </div>
 @endsection
 
@@ -125,6 +129,15 @@
 
         .clear-link:hover {
             color: #f5f5f5;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination svg {
+            width: 16px;
+            height: 16px;
         }
     </style>
 @endsection

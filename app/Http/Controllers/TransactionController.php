@@ -12,13 +12,23 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with(['items.product', 'user'])
-            ->latest()
-            ->paginate(15);
+        $search = trim((string) $request->query('q', ''));
 
-        return view('transactions.index', compact('transactions'));
+        $products = Product::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $term = '%' . addcslashes($search, '%_\\') . '%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', $term)
+                        ->orWhere('sku', 'like', $term);
+                });
+            })
+            ->orderBy('name')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('products.index', compact('products', 'search'));
     }
 
     public function create()
