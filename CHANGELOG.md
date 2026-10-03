@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/stvnfrlls/mysari-app/compare/v1.15.0...v1.16.0) (2026-10-03)
+
+
+### Features
+
+* add product search by name or SKU ([23a47c2](https://github.com/stvnfrlls/mysari-app/commit/23a47c23af6547e60a2255d7162b0932070fa9f9))
+
 # [1.15.0](https://github.com/stvnfrlls/mysari-app/compare/v1.14.0...v1.15.0) (2026-10-03)
 
 
