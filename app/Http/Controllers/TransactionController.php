@@ -74,6 +74,11 @@ class TransactionController extends Controller
                 $total += $products[$productId]->price * $quantity;
             }
 
+            if ($total > 99999999.99) {
+                $error = 'Sale total is too large.';
+                return;
+            }
+
             $transaction = Transaction::create([
                 'user_id' => $request->user()->id,
                 'total' => round($total, 2),
