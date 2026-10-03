@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/stvnfrlls/mysari-app/compare/v1.13.0...v1.14.0) (2026-10-03)
+
+
+### Features
+
+* add owner and cashier roles, restrict void and product delete to owners ([4c380c4](https://github.com/stvnfrlls/mysari-app/commit/4c380c447af5e0e30889d9f2014be9e2f5e53f89))
+
 # [1.13.0](https://github.com/stvnfrlls/mysari-app/compare/v1.12.0...v1.13.0) (2026-10-03)
 
 
