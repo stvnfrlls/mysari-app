@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/stvnfrlls/mysari-app/compare/v1.20.0...v1.21.0) (2026-10-03)
+
+
+### Features
+
+* paginate the customers list ([81f4b2b](https://github.com/stvnfrlls/mysari-app/commit/81f4b2b580b1896ece3853ba5a260c7dec1d86b7))
+
 # [1.20.0](https://github.com/stvnfrlls/mysari-app/compare/v1.19.0...v1.20.0) (2026-10-03)
 
 
