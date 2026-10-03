@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { test, expect } from '../fixtures.js';
+import { execSync } from '../support/exec.js';
 
 test.describe('Utang (credit) tracking', () => {
     test.beforeEach(async ({ page }) => {

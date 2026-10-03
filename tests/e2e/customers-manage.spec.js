@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { test, expect } from '../fixtures.js';
+import { execSync } from '../support/exec.js';
 
 const CASHIER_EMAIL = 'cashier@example.com';
 const REFUSED = 'This customer has sales or payments on record and cannot be deleted.';

@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures.js';
+import { workerDb } from '../support/exec.js';
 
 const OWNER_EMAIL = 'testuser@example.com';
 const CASHIER_EMAIL = 'cashier@example.com';
@@ -40,6 +41,7 @@ test.describe('User deactivation and password reset', () => {
         await addUser(page, { name: 'Kick Me', email, role: 'cashier' });
 
         const otherContext = await browser.newContext({ baseURL: BASE_URL });
+        await otherContext.addCookies([{ name: 'test_db', value: workerDb(), url: BASE_URL }]);
         const otherPage = await otherContext.newPage();
         await login(otherPage, email);
 

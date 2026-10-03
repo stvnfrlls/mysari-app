@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { test, expect } from '../fixtures.js';
+import { execSync } from '../support/exec.js';
 import fs from 'fs';
 
 const HEADER = 'Product,"Units Sold",Revenue,Cost,Profit';

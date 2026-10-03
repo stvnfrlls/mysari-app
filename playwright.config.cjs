@@ -5,7 +5,7 @@ module.exports = defineConfig({
     testDir: './tests/e2e',
     globalSetup: require.resolve('./tests/global-setup.js'),
     fullyParallel: false,
-    workers: 1,
+    workers: Number(process.env.PW_WORKERS || 1),
     retries: process.env.CI ? 2 : 0,
     use: {
         baseURL: 'http://localhost:8000',

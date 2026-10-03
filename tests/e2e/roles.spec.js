@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { test, expect } from '../fixtures.js';
+import { execSync } from '../support/exec.js';
 
 const OWNER_EMAIL = 'testuser@example.com';
 const CASHIER_EMAIL = 'cashier@example.com';

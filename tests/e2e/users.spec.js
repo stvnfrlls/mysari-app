@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures.js';
 
 const OWNER_EMAIL = 'testuser@example.com';
 const CASHIER_EMAIL = 'cashier@example.com';

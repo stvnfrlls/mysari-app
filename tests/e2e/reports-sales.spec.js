@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { test, expect } from '../fixtures.js';
+import { execSync } from '../support/exec.js';
 
 test.describe('Sales report', () => {
     test.beforeEach(async ({ page }) => {

@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { test, expect } from '../fixtures.js';
+import { execSync } from '../support/exec.js';
 
 test.beforeAll(() => {
     execSync('docker compose exec -T app php artisan db:seed --class=TestUserSeeder');
