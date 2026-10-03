@@ -53,5 +53,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
+
+        Route::patch('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
+        Route::patch('/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+        Route::patch('/users/{user}/password', [UserController::class, 'resetPassword'])->name('users.password');
     });
 });

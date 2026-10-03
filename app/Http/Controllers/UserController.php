@@ -48,4 +48,33 @@ class UserController extends Controller
 
         return back()->with('status', 'Role updated.');
     }
+
+    public function deactivate(Request $request, User $user)
+    {
+        if ($user->is($request->user())) {
+            return back()->withErrors(['user' => 'You cannot deactivate your own account.']);
+        }
+
+        $user->forceFill(['deactivated_at' => now()])->save();
+
+        return back()->with('status', 'User deactivated.');
+    }
+
+    public function activate(User $user)
+    {
+        $user->forceFill(['deactivated_at' => null])->save();
+
+        return back()->with('status', 'User reactivated.');
+    }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $user->update(['password' => $validated['password']]);
+
+        return back()->with('status', 'Password reset.');
+    }
 }
