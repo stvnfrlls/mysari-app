@@ -11,6 +11,42 @@ class ReportController extends Controller
 {
     public function sales(Request $request)
     {
+        [$from, $to, $summary, $productBreakdown] = $this->salesData($request);
+
+        return view('reports.sales', compact('summary', 'productBreakdown', 'from', 'to'));
+    }
+
+    public function exportSales(Request $request)
+    {
+        [$from, $to,, $productBreakdown] = $this->salesData($request);
+
+        $filename = sprintf('sales-report-%s-to-%s.csv', $from->format('Y-m-d'), $to->format('Y-m-d'));
+
+        return response()->streamDownload(function () use ($productBreakdown) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF");
+            fputcsv($out, ['Product', 'Units Sold', 'Revenue', 'Cost', 'Profit'], ',', '"', '');
+
+            foreach ($productBreakdown as $row) {
+                $hasCost = $row->total_cost !== null;
+
+                fputcsv($out, [
+                    $this->csvSafe($row->product->name ?? 'Deleted product'),
+                    $row->total_quantity,
+                    number_format((float) $row->total_revenue, 2, '.', ''),
+                    $hasCost ? number_format((float) $row->total_cost, 2, '.', '') : '',
+                    $hasCost
+                        ? number_format((float) $row->costed_revenue - (float) $row->total_cost, 2, '.', '')
+                        : '',
+                ], ',', '"', '');
+            }
+
+            fclose($out);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    private function salesData(Request $request): array
+    {
         $from = $request->filled('from')
             ? Carbon::parse($request->input('from'))->startOfDay()
             : now()->startOfMonth();
@@ -51,6 +87,11 @@ class ReportController extends Controller
             ->orderByDesc('total_revenue')
             ->get();
 
-        return view('reports.sales', compact('summary', 'productBreakdown', 'from', 'to'));
+        return [$from, $to, $summary, $productBreakdown];
+    }
+
+    private function csvSafe(string $value): string
+    {
+        return preg_match('/^[=+\-@\t\r]/', $value) ? "'" . $value : $value;
     }
 }

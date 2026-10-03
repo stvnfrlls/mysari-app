@@ -11,6 +11,10 @@
                 <h1>Sales Report</h1>
                 <p class="page-subtitle">{{ $from->format('M j, Y') }} – {{ $to->format('M j, Y') }}</p>
             </div>
+            <div class="header-actions">
+                <a href="{{ route('reports.sales.export', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')]) }}"
+                    class="cta-button-secondary" id="exportCsv">Export CSV</a>
+            </div>
         </div>
 
         <form method="GET" action="{{ route('reports.sales') }}"

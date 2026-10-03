@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
 
     Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])
         ->name('transactions.void')
