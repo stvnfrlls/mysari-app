@@ -18,6 +18,7 @@ class UseTestDatabase
                 $connection = config('database.default');
 
                 config(["database.connections.{$connection}.database" => $name]);
+                config(['queue.default' => 'database']);
                 DB::purge($connection);
             }
         }

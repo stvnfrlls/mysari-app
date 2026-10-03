@@ -7,7 +7,7 @@ export function workerDb() {
 export function execSync(command, options) {
     const scoped = command.replace(
         'docker compose exec -T app',
-        `docker compose exec -T -e DB_DATABASE=${workerDb()} app`
+        `docker compose exec -T -e DB_DATABASE=${workerDb()} -e QUEUE_CONNECTION=database app`
     );
 
     return nodeExecSync(scoped, options);
