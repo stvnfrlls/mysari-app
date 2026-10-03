@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/stvnfrlls/mysari-app/compare/v1.24.0...v1.25.0) (2026-10-03)
+
+
+### Features
+
+* queue sales report exports ([a902c73](https://github.com/stvnfrlls/mysari-app/commit/a902c73639aeb160b1cb89a273437f9d5cfa1cfa))
+
 # [1.24.0](https://github.com/stvnfrlls/mysari-app/compare/v1.23.1...v1.24.0) (2026-10-03)
 
 
