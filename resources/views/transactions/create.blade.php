@@ -28,6 +28,24 @@
             <label for="quantity">Quantity</label>
             <input type="number" id="quantity" name="quantity" min="1" value="1" required>
 
+            <div class="credit-row">
+                <input type="checkbox" id="is_credit" name="is_credit" value="1"
+                    {{ old('is_credit') ? 'checked' : '' }}>
+                <label for="is_credit">Pay later (utang)</label>
+            </div>
+
+            <div id="customerField" {{ old('is_credit') ? '' : 'hidden' }}>
+                <label for="customer_id">Customer</label>
+                <select id="customer_id" name="customer_id" {{ old('is_credit') ? 'required' : 'disabled' }}>
+                    <option value="">Select a customer</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                            {{ $customer->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             <p class="line-total" id="lineTotal"></p>
 
             <button type="submit">Record Sale</button>
@@ -40,6 +58,10 @@
             const qty = document.getElementById('quantity');
             const lineTotal = document.getElementById('lineTotal');
 
+            const isCredit = document.getElementById('is_credit');
+            const customerField = document.getElementById('customerField');
+            const customerSelect = document.getElementById('customer_id');
+
             function updateTotal() {
                 const opt = select.options[select.selectedIndex];
                 const price = parseFloat(opt?.dataset.price || 0);
@@ -49,6 +71,12 @@
 
             select.addEventListener('change', updateTotal);
             qty.addEventListener('input', updateTotal);
+
+            isCredit.addEventListener('change', () => {
+                customerField.hidden = !isCredit.checked;
+                customerSelect.disabled = !isCredit.checked;
+                customerSelect.required = isCredit.checked;
+            });
         });
     </script>
 @endsection
@@ -87,6 +115,21 @@
             font-family: var(--font-sans);
             font-size: 14px;
             outline: none;
+        }
+
+        .credit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .credit-row input[type="checkbox"] {
+            width: auto;
+        }
+
+        .credit-row label {
+            margin: 0;
         }
 
         .line-total {

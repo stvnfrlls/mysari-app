@@ -1,0 +1,139 @@
+@extends('layouts.app')
+
+@section('title', $customer->name)
+
+@section('main-class', 'list-page')
+
+@section('content')
+    <div class="page">
+        <div class="page-header">
+            <div>
+                <h1>{{ $customer->name }}</h1>
+                <p class="page-subtitle">Balance: ₱{{ number_format($customer->balance(), 2) }}</p>
+            </div>
+            <a href="{{ route('customers.index') }}" class="cta-button">Back to Customers</a>
+        </div>
+
+        @if (session('status'))
+            <div class="status-box">{{ session('status') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div class="status-box">{{ $errors->first() }}</div>
+        @endif
+
+        <form method="POST" action="{{ route('customers.pay', $customer) }}" class="inline-form">
+            @csrf
+            <input type="number" name="amount" step="0.01" min="0.01" placeholder="Amount (₱)" required>
+            <input type="text" name="note" placeholder="Note (optional)" maxlength="255">
+            <button type="submit" class="form-button">Record Payment</button>
+        </form>
+
+        <h2 class="section-title">Credit sales</h2>
+        <div class="table-panel">
+            @if ($credits->isEmpty())
+                <div class="empty-state">
+                    <p>No credit sales yet.</p>
+                </div>
+            @else
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($credits as $credit)
+                            <tr @class(['voided' => $credit->isVoided()])>
+                                <td class="muted">{{ $credit->created_at->format('M j, Y g:i A') }}</td>
+                                <td>
+                                    @foreach ($credit->items as $item)
+                                        {{ $item->product->name ?? 'Deleted product' }} × {{ $item->quantity }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td>₱{{ number_format($credit->total, 2) }}</td>
+                                <td class="actions">
+                                    @if ($credit->isVoided())
+                                        <span class="badge-voided">Voided</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+        </div>
+
+        <h2 class="section-title">Payments</h2>
+        <div class="table-panel">
+            @if ($payments->isEmpty())
+                <div class="empty-state">
+                    <p>No payments yet.</p>
+                </div>
+            @else
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($payments as $payment)
+                            <tr>
+                                <td class="muted">{{ $payment->created_at->format('M j, Y g:i A') }}</td>
+                                <td>₱{{ number_format($payment->amount, 2) }}</td>
+                                <td class="muted">{{ $payment->note }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+        </div>
+    </div>
+@endsection
+
+@section('styles')
+    <style>
+        .inline-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .inline-form input {
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            color: #eee;
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .form-button {
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            color: #eee;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .form-button:hover {
+            background: #1a1a1a;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 28px 0 12px;
+        }
+    </style>
+@endsection

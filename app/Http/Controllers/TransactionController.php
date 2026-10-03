@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
@@ -22,9 +23,10 @@ class TransactionController extends Controller
 
     public function create()
     {
-        $products = Product::orderBy('name')->get();
-
-        return view('transactions.create', compact('products'));
+        return view('transactions.create', [
+            'products' => Product::orderBy('name')->get(),
+            'customers' => Customer::orderBy('name')->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -32,11 +34,14 @@ class TransactionController extends Controller
         $validated = $request->validate([
             'product_id' => ['required', 'exists:products,id'],
             'quantity' => ['required', 'integer', 'min:1'],
+            'is_credit' => ['nullable', 'boolean'],
+            'customer_id' => ['required_if:is_credit,1', 'nullable', 'exists:customers,id'],
         ]);
 
+        $isCredit = $request->boolean('is_credit');
         $available = null;
 
-        DB::transaction(function () use ($validated, $request, &$available) {
+        DB::transaction(function () use ($validated, $request, $isCredit, &$available) {
             $product = Product::whereKey($validated['product_id'])
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -49,6 +54,8 @@ class TransactionController extends Controller
             $transaction = Transaction::create([
                 'user_id' => $request->user()->id,
                 'total' => $product->price * $validated['quantity'],
+                'is_credit' => $isCredit,
+                'customer_id' => $isCredit ? $validated['customer_id'] : null,
             ]);
 
             TransactionItem::create([

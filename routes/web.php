@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
@@ -36,4 +37,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/products/{product}/restock', [ProductController::class, 'restock'])->name('products.restock');
     Route::get('/products/{product}/history', [ProductController::class, 'history'])->name('products.history');
+
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+    Route::post('/customers/{customer}/payments', [CustomerController::class, 'pay'])->name('customers.pay');
 });
