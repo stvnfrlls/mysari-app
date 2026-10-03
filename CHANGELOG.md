@@ -1,3 +1,15 @@
+# [1.23.0](https://github.com/stvnfrlls/mysari-app/compare/v1.22.1...v1.23.0) (2026-10-03)
+
+
+### Bug Fixes
+
+* deny dotfiles, run only index.php and add security headers in nginx ([82cf687](https://github.com/stvnfrlls/mysari-app/commit/82cf687c628bc5d1ae6bf077502a30c48916a5c6))
+
+
+### Features
+
+* record who took each payment and let owners void payments ([aab71a9](https://github.com/stvnfrlls/mysari-app/commit/aab71a95d95d134649f2c4905a2f1294ce375cf4))
+
 ## [1.22.1](https://github.com/stvnfrlls/mysari-app/compare/v1.22.0...v1.22.1) (2026-10-03)
 
 
