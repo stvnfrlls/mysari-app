@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/stvnfrlls/mysari-app/compare/v1.23.1...v1.24.0) (2026-10-03)
+
+
+### Features
+
+* queue low-stock alerts and refresh the dashboard live ([1818af2](https://github.com/stvnfrlls/mysari-app/commit/1818af22cb89d811da911e9c30d202c07aedc429))
+
 ## [1.23.1](https://github.com/stvnfrlls/mysari-app/compare/v1.23.0...v1.23.1) (2026-10-03)
 
 
