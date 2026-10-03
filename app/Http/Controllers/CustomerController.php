@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Payment;
 
 class CustomerController extends Controller
 {
@@ -12,7 +13,7 @@ class CustomerController extends Controller
     {
         $customers = Customer::query()
             ->withSum(['transactions as credit_total' => fn($q) => $q->active()->where('is_credit', true)], 'total')
-            ->withSum('payments as paid_total', 'amount')
+            ->withSum(['payments as paid_total' => fn($q) => $q->active()], 'amount')
             ->orderBy('name')
             ->paginate(20);
 
@@ -39,7 +40,7 @@ class CustomerController extends Controller
             ->latest()
             ->get();
 
-        $payments = $customer->payments()->latest()->get();
+        $payments = $customer->payments()->with('user')->latest()->get();
 
         return view('customers.show', compact('customer', 'credits', 'payments'));
     }
@@ -78,7 +79,7 @@ class CustomerController extends Controller
 
         $error = null;
 
-        DB::transaction(function () use ($customer, $validated, &$error) {
+        DB::transaction(function () use ($customer, $validated, $request, &$error) {
             $locked = Customer::whereKey($customer->id)->lockForUpdate()->firstOrFail();
             $balance = round($locked->balance(), 2);
 
@@ -87,7 +88,7 @@ class CustomerController extends Controller
                 return;
             }
 
-            $locked->payments()->create($validated);
+            $locked->payments()->create($validated + ['user_id' => $request->user()->id]);
         });
 
         if ($error) {
@@ -95,5 +96,26 @@ class CustomerController extends Controller
         }
 
         return back()->with('status', 'Payment recorded.');
+    }
+
+    public function voidPayment(Request $request, Payment $payment)
+    {
+        $data = $request->validate(['reason' => ['nullable', 'string', 'max:255']]);
+
+        DB::transaction(function () use ($payment, $data, $request) {
+            $locked = Payment::whereKey($payment->id)->lockForUpdate()->firstOrFail();
+
+            if ($locked->isVoided()) {
+                return;
+            }
+
+            $locked->forceFill([
+                'voided_at' => now(),
+                'void_reason' => $data['reason'] ?? null,
+                'voided_by' => $request->user()->id,
+            ])->save();
+        });
+
+        return back()->with('status', 'Payment voided.');
     }
 }

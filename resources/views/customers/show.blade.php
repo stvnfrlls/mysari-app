@@ -93,14 +93,33 @@
                             <th>Date</th>
                             <th>Amount</th>
                             <th>Note</th>
+                            <th>Recorded by</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($payments as $payment)
-                            <tr>
+                            <tr @class(['voided' => $payment->isVoided()])>
                                 <td class="muted">{{ $payment->created_at->format('M j, Y g:i A') }}</td>
                                 <td>₱{{ number_format($payment->amount, 2) }}</td>
                                 <td class="muted">{{ $payment->note }}</td>
+                                <td class="muted">{{ $payment->user->name ?? '—' }}</td>
+                                <td class="actions">
+                                    @if ($payment->isVoided())
+                                        <span class="badge-voided">Voided</span>
+                                    @else
+                                        @role('owner')
+                                            <form method="POST" action="{{ route('payments.void', $payment) }}"
+                                                class="void-form" onsubmit="return confirm('Void this payment?')">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="text" name="reason" placeholder="Reason (optional)"
+                                                    maxlength="255" aria-label="Void reason">
+                                                <button type="submit" class="form-button">Void</button>
+                                            </form>
+                                        @endrole
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -127,13 +146,19 @@
             margin-bottom: 20px;
         }
 
-        .inline-form input {
+        .inline-form input,
+        .void-form input {
             background: #0a0a0a;
             border: 1px solid #2a2a2a;
             border-radius: 6px;
             color: #eee;
             padding: 8px 10px;
             font-size: 13px;
+        }
+
+        .void-form {
+            display: flex;
+            gap: 8px;
         }
 
         .form-button {

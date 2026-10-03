@@ -22,6 +22,6 @@ class Customer extends Model
     {
         $credit = $this->transactions()->active()->where('is_credit', true)->sum('total');
 
-        return (float) $credit - (float) $this->payments()->sum('amount');
+        return (float) $credit - (float) $this->payments()->active()->sum('amount');
     }
 }

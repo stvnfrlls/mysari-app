@@ -28,7 +28,7 @@ class DashboardController extends Controller
                 ->where('is_credit', true)
                 ->sum('total'),
             'utang_outstanding' => Transaction::active()->where('is_credit', true)->sum('total')
-                - Payment::sum('amount'),
+                - Payment::active()->sum('amount'),
         ];
 
         $topProducts = TransactionItem::query()
