@@ -49,6 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
     Route::post('/customers/{customer}/payments', [CustomerController::class, 'pay'])->name('customers.pay');
 
+    Route::patch('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])
+        ->name('customers.destroy')
+        ->middleware('role:owner');
+
     Route::middleware('role:owner')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');

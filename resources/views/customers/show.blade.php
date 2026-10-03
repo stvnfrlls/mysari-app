@@ -19,8 +19,18 @@
         @endif
 
         @if ($errors->any())
-            <div class="status-box">{{ $errors->first() }}</div>
+            <div class="error-box">{{ $errors->first() }}</div>
         @endif
+
+        <form method="POST" action="{{ route('customers.update', $customer) }}" class="inline-form">
+            @csrf
+            @method('PATCH')
+            <input type="text" name="name" value="{{ old('name', $customer->name) }}" placeholder="Customer name"
+                required maxlength="255" aria-label="Customer name">
+            <input type="text" name="phone" value="{{ old('phone', $customer->phone) }}" placeholder="Phone (optional)"
+                maxlength="30" aria-label="Customer phone">
+            <button type="submit" class="form-button">Save Details</button>
+        </form>
 
         <form method="POST" action="{{ route('customers.pay', $customer) }}" class="inline-form">
             @csrf
@@ -51,7 +61,8 @@
                                 <td class="muted">{{ $credit->created_at->format('M j, Y g:i A') }}</td>
                                 <td>
                                     @foreach ($credit->items as $item)
-                                        {{ $item->product->name ?? 'Deleted product' }} × {{ $item->quantity }}@if (!$loop->last)
+                                        {{ $item->product->name ?? 'Deleted product' }} × {{ $item->quantity }}
+                                        @if (!$loop->last)
                                             ,
                                         @endif
                                     @endforeach
@@ -96,6 +107,15 @@
                 </table>
             @endif
         </div>
+
+        @role('owner')
+            <form method="POST" action="{{ route('customers.destroy', $customer) }}" class="delete-form"
+                onsubmit="return confirm('Delete this customer?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="form-button">Delete Customer</button>
+            </form>
+        @endrole
     </div>
 @endsection
 
@@ -134,6 +154,10 @@
             font-size: 15px;
             font-weight: 600;
             margin: 28px 0 12px;
+        }
+
+        .delete-form {
+            margin-top: 28px;
         }
     </style>
 @endsection

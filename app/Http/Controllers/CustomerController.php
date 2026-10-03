@@ -44,6 +44,31 @@ class CustomerController extends Controller
         return view('customers.show', compact('customer', 'credits', 'payments'));
     }
 
+    public function update(Request $request, Customer $customer)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+        ]);
+
+        $customer->update($validated);
+
+        return back()->with('status', 'Customer updated.');
+    }
+
+    public function destroy(Customer $customer)
+    {
+        if ($customer->transactions()->exists() || $customer->payments()->exists()) {
+            return back()->withErrors([
+                'customer' => 'This customer has sales or payments on record and cannot be deleted.',
+            ]);
+        }
+
+        $customer->delete();
+
+        return redirect()->route('customers.index')->with('status', 'Customer deleted.');
+    }
+
     public function pay(Request $request, Customer $customer)
     {
         $validated = $request->validate([
