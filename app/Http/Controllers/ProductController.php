@@ -7,6 +7,7 @@ use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use App\Models\TransactionItem;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\CheckLowStock;
 
 class ProductController extends Controller
 {
@@ -45,7 +46,9 @@ class ProductController extends Controller
             'low_stock_threshold' => ['required', 'integer', 'min:0', 'max:1000000'],
         ]);
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        CheckLowStock::dispatch([$product->id]);
 
         return redirect()->route('products.index')->with('status', 'Product added.');
     }
@@ -81,6 +84,8 @@ class ProductController extends Controller
                 ]);
             }
         });
+
+        CheckLowStock::dispatch([$product->id]);
 
         return redirect()->route('products.index')->with('status', 'Product updated.');
     }
@@ -125,6 +130,8 @@ class ProductController extends Controller
                 'note'            => $data['note'] ?? null,
             ]);
         });
+
+        CheckLowStock::dispatch([$product->id]);
 
         return back()->with('status', 'Stock updated.');
     }

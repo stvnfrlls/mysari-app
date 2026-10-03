@@ -21,6 +21,8 @@ class ResetTestData extends Command
         DB::table('stock_movements')->truncate();
         DB::table('transaction_items')->truncate();
         DB::table('transactions')->truncate();
+        DB::table('low_stock_alerts')->truncate();
+        DB::table('jobs')->truncate();
         DB::table('customers')->truncate();
         DB::table('products')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

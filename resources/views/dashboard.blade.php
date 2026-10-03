@@ -14,34 +14,34 @@
         <div class="stat-grid">
             <div class="stat-card">
                 <p class="stat-label">Today's Sales</p>
-                <p class="stat-value">₱{{ number_format($stats['todays_sales'], 2) }}</p>
+                <p class="stat-value" id="statSales">₱{{ number_format($stats['todays_sales'], 2) }}</p>
             </div>
             <div class="stat-card">
                 <p class="stat-label">Items in Stock</p>
-                <p class="stat-value">{{ $stats['items_in_stock'] }}</p>
+                <p class="stat-value" id="statStock">{{ $stats['items_in_stock'] }}</p>
             </div>
             <div class="stat-card">
                 <p class="stat-label">Low Stock Alerts</p>
-                <p class="stat-value">{{ $stats['low_stock_count'] }}</p>
+                <p class="stat-value" id="statLow">{{ $stats['low_stock_count'] }}</p>
             </div>
             <div class="stat-card">
                 <p class="stat-label">Transactions Today</p>
-                <p class="stat-value">{{ $stats['transactions_today'] }}</p>
+                <p class="stat-value" id="statTx">{{ $stats['transactions_today'] }}</p>
             </div>
         </div>
 
         <div class="summary-grid">
             <div class="summary-card" id="todayCash">
                 <p class="summary-label">Cash Sales Today</p>
-                <p class="summary-value">₱{{ number_format($today['cash'], 2) }}</p>
+                <p class="summary-value" id="cashValue">₱{{ number_format($today['cash'], 2) }}</p>
             </div>
             <div class="summary-card" id="todayCredit">
                 <p class="summary-label">Credit Sales Today</p>
-                <p class="summary-value">₱{{ number_format($today['credit'], 2) }}</p>
+                <p class="summary-value" id="creditValue">₱{{ number_format($today['credit'], 2) }}</p>
             </div>
             <div class="summary-card" id="utangOutstanding">
                 <p class="summary-label">Utang Outstanding</p>
-                <p class="summary-value">₱{{ number_format($today['utang_outstanding'], 2) }}</p>
+                <p class="summary-value" id="utangValue">₱{{ number_format($today['utang_outstanding'], 2) }}</p>
             </div>
         </div>
 
@@ -59,6 +59,25 @@
                     </p>
                 @endforeach
             @endif
+        </div>
+
+        <div class="activity-panel top-panel" id="lowStockAlerts">
+            <h2>Low Stock Alerts</h2>
+            <div id="alertList">
+                @if ($lowStockAlerts->isEmpty())
+                    <div class="activity-empty">
+                        <p>No low stock alerts.</p>
+                    </div>
+                @else
+                    @foreach ($lowStockAlerts as $alert)
+                        <p class="top-row">
+                            <span>{{ $alert->product->name }}</span>
+                            <span class="muted">{{ $alert->product->stock_quantity }} left · alerted
+                                {{ $alert->created_at->diffForHumans() }}</span>
+                        </p>
+                    @endforeach
+                @endif
+            </div>
         </div>
 
         <div class="activity-panel">
@@ -86,6 +105,73 @@
             @endif
         </div>
     </div>
+
+    <script>
+        (function() {
+            const url = @json(route('dashboard.data'));
+
+            function setText(id, value) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            }
+
+            function renderAlerts(alerts) {
+                const list = document.getElementById('alertList');
+                list.replaceChildren();
+
+                if (alerts.length === 0) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'activity-empty';
+                    const p = document.createElement('p');
+                    p.textContent = 'No low stock alerts.';
+                    wrap.appendChild(p);
+                    list.appendChild(wrap);
+                    return;
+                }
+
+                alerts.forEach(function(a) {
+                    const row = document.createElement('p');
+                    row.className = 'top-row';
+                    const name = document.createElement('span');
+                    name.textContent = a.name;
+                    const meta = document.createElement('span');
+                    meta.className = 'muted';
+                    meta.textContent = a.left + ' left · alerted ' + a.since;
+                    row.append(name, meta);
+                    list.appendChild(row);
+                });
+            }
+
+            async function refresh() {
+                if (document.hidden) return;
+
+                try {
+                    const res = await fetch(url, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) return;
+
+                    const d = await res.json();
+                    setText('statSales', d.todays_sales);
+                    setText('statStock', d.items_in_stock);
+                    setText('statLow', d.low_stock_count);
+                    setText('statTx', d.transactions_today);
+                    setText('cashValue', d.cash);
+                    setText('creditValue', d.credit);
+                    setText('utangValue', d.utang_outstanding);
+                    renderAlerts(d.alerts);
+                } catch (e) {
+                    // Network blip: keep the current numbers and try again next tick.
+                }
+            }
+
+            setInterval(refresh, 10000);
+        })();
+    </script>
 @endsection
 
 @section('styles')

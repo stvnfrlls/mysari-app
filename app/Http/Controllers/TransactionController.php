@@ -9,6 +9,7 @@ use App\Models\TransactionItem;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\CheckLowStock;
 
 class TransactionController extends Controller
 {
@@ -112,6 +113,8 @@ class TransactionController extends Controller
             return back()->withInput()->withErrors(['items' => $error]);
         }
 
+        CheckLowStock::dispatch($lines->keys()->all());
+
         return redirect()->route('transactions.index')->with('status', 'Sale recorded.');
     }
 
@@ -146,6 +149,8 @@ class TransactionController extends Controller
                 'void_reason' => $data['reason'] ?? null,
             ])->save();
         });
+
+        CheckLowStock::dispatch($transaction->items()->pluck('product_id')->unique()->all());
 
         return redirect()->route('transactions.index')->with('status', 'Transaction voided.');
     }

@@ -13,6 +13,18 @@ services:
     networks:
       - app-network
 
+  worker:
+    image: ${IMAGE_NAME}:latest
+    restart: unless-stopped
+    command: ["su", "-s", "/bin/sh", "www-data", "-c", "php artisan queue:work --sleep=3 --tries=3 --max-time=3600"]
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - app
+      - db
+    networks:
+      - app-network
+
   webserver:
     image: nginx:1.27-alpine
     container_name: ${APP_NAME}-nginx
