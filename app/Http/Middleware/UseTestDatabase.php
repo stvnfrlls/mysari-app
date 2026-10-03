@@ -11,10 +11,10 @@ class UseTestDatabase
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (config('testdb.enabled') && ! app()->isProduction()) {
+        if (config('testdb.enabled') && app()->environment(['local', 'testing'])) {
             $name = $request->cookies->get('test_db');
 
-            if (is_string($name) && preg_match('/^sariapp_test_\d{1,2}$/', $name)) {
+            if (is_string($name) && preg_match('/^sariapp_test_\d{1,2}\z/', $name)) {
                 $connection = config('database.default');
 
                 config(["database.connections.{$connection}.database" => $name]);
