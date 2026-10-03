@@ -1,3 +1,15 @@
+# [1.20.0](https://github.com/stvnfrlls/mysari-app/compare/v1.19.0...v1.20.0) (2026-10-03)
+
+
+### Bug Fixes
+
+* restore the transactions list that was overwritten by the products pager change ([6a530c2](https://github.com/stvnfrlls/mysari-app/commit/6a530c27344789f7176a22863d825f46105b9840))
+
+
+### Features
+
+* paginate the products list with a themed pager ([6958111](https://github.com/stvnfrlls/mysari-app/commit/6958111d29fa7c89d76e4eee93c8ce5b49673e8d))
+
 # [1.19.0](https://github.com/stvnfrlls/mysari-app/compare/v1.18.0...v1.19.0) (2026-10-03)
 
 
