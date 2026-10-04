@@ -123,6 +123,10 @@ class TransactionController extends Controller
         $data = $request->validate(['reason' => ['nullable', 'string', 'max:255']]);
 
         DB::transaction(function () use ($transaction, $data) {
+            if ($transaction->is_credit && $transaction->customer_id) {
+                Customer::whereKey($transaction->customer_id)->lockForUpdate()->first();
+            }
+
             $locked = Transaction::with('items')
                 ->whereKey($transaction->id)
                 ->lockForUpdate()
