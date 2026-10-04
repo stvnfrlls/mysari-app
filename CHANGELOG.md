@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/stvnfrlls/mysari-app/compare/v1.27.0...v1.28.0) (2026-10-04)
+
+
+### Features
+
+* poll the sales report totals ([1f761ff](https://github.com/stvnfrlls/mysari-app/commit/1f761ffa3371a4ab9f5c074fed1d4d97917b9782))
+
 # [1.27.0](https://github.com/stvnfrlls/mysari-app/compare/v1.26.1...v1.27.0) (2026-10-04)
 
 
