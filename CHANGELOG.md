@@ -1,3 +1,10 @@
+## [1.29.3](https://github.com/stvnfrlls/mysari-app/compare/v1.29.2...v1.29.3) (2026-10-04)
+
+
+### Bug Fixes
+
+* only owners can create products ([b6c4aca](https://github.com/stvnfrlls/mysari-app/commit/b6c4aca384a1a5a3c81166f8b93325dee501966f))
+
 ## [1.29.2](https://github.com/stvnfrlls/mysari-app/compare/v1.29.1...v1.29.2) (2026-10-04)
 
 
