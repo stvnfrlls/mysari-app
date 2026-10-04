@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures.js';
-import { execSync } from '../support/exec.js';
+import { execSync, workerDb } from '../support/exec.js';
 
 const OWNER_EMAIL = 'testuser@example.com';
 const CASHIER_EMAIL = 'cashier@example.com';
@@ -26,10 +26,11 @@ test.describe('Owner and cashier roles', () => {
         ).toBeVisible();
     });
 
-    test('cashier does not see Void or Delete buttons', async ({ page }) => {
-        await login(page, CASHIER_EMAIL);
+    test('cashier does not see Void or Delete buttons', async ({ page, browser }) => {
         const name = `Role Cashier Item ${Date.now()}`;
-        await createProduct(page, { name, sku: `SKU-RC-${Date.now()}`, price: 30, stock: 10 });
+        await createProductAsOwner(browser, { name, sku: `SKU-RC-${Date.now()}`, price: 30, stock: 10 });
+
+        await login(page, CASHIER_EMAIL);
         await recordSale(page, name, 1);
 
         await page.goto('/transactions');
@@ -43,10 +44,11 @@ test.describe('Owner and cashier roles', () => {
         await expect(productRow.getByRole('button', { name: 'Delete' })).toHaveCount(0);
     });
 
-    test('cashier gets 403 when calling void, delete, edit and update directly', async ({ page }) => {
-        await login(page, CASHIER_EMAIL);
+    test('cashier gets 403 when calling void, delete, edit and update directly', async ({ page, browser }) => {
         const name = `Role Direct Item ${Date.now()}`;
-        await createProduct(page, { name, sku: `SKU-RD-${Date.now()}`, price: 30, stock: 10 });
+        await createProductAsOwner(browser, { name, sku: `SKU-RD-${Date.now()}`, price: 30, stock: 10 });
+
+        await login(page, CASHIER_EMAIL);
         await recordSale(page, name, 1);
 
         await page.goto('/transactions/create');
@@ -54,7 +56,8 @@ test.describe('Owner and cashier roles', () => {
             .locator('#product_id option', { hasText: name })
             .getAttribute('value');
 
-        await page.goto('/products/create');
+        // Any page with a form gives a token, so the POSTs reach the role check instead of a 419.
+        await page.goto('/customers');
         const token = await page.locator('input[name="_token"]').first().inputValue();
 
         const del = await page.request.post(`/products/${productId}`, {
@@ -96,6 +99,19 @@ async function login(page, email) {
     await page.getByLabel('Password').fill(process.env.TEST_USER_PASSWORD);
     await page.getByRole('button', { name: 'Sign In' }).click();
     await expect(page).toHaveURL('/dashboard');
+}
+
+// Cashiers cannot create products, so an owner does it in a separate browser context.
+async function createProductAsOwner(browser, product) {
+    const ownerContext = await browser.newContext({ baseURL: 'http://localhost:8000' });
+    await ownerContext.addCookies([
+        { name: 'test_db', value: workerDb(), url: 'http://localhost:8000' },
+    ]);
+    const ownerPage = await ownerContext.newPage();
+
+    await login(ownerPage, OWNER_EMAIL);
+    await createProduct(ownerPage, product);
+    await ownerContext.close();
 }
 
 async function createProduct(page, { name, sku, price, stock, threshold = '5' }) {

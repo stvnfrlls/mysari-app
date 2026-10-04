@@ -13,7 +13,9 @@
             </div>
             <div class="header-actions">
                 <a href="{{ route('products.low-stock') }}" class="cta-button-secondary">Low Stock</a>
-                <a href="{{ route('products.create') }}" class="cta-button">Add Product</a>
+                @role('owner')
+                    <a href="{{ route('products.create') }}" class="cta-button">Add Product</a>
+                @endrole
             </div>
         </div>
 

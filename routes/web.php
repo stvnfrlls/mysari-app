@@ -25,8 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-    Route::resource('products', ProductController::class)
-        ->only(['index', 'create', 'store']);
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])
         ->name('products.destroy')
         ->middleware('role:owner');
@@ -37,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
     Route::middleware('role:owner')->group(function () {
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
         Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
         Route::match(['put', 'patch'], '/products/{product}', [ProductController::class, 'update'])->name('products.update');
 

@@ -14,7 +14,7 @@ test.describe('Cashier restrictions', () => {
         test.setTimeout(60000);
 
         // Grab a CSRF token from any page with a form, so the POST reaches the role check instead of a 419.
-        await page.goto('/products/create');
+        await page.goto('/customers');
         const token = await page.locator('input[name="_token"]').first().inputValue();
 
         const queue = await page.request.post('/reports/sales/exports', {
@@ -60,22 +60,32 @@ test.describe('Cashier restrictions', () => {
         expect(summaries.status()).toBe(403);
     });
 
-    test('a cashier sees no Sales Report link and no product Edit link', async ({ page }) => {
+    test('a cashier sees no Sales Report, Daily Summaries or Add Product link', async ({ page }) => {
         await expect(page.getByRole('link', { name: 'Sales Report' })).toHaveCount(0);
         await expect(page.getByRole('link', { name: 'Daily Summaries' })).toHaveCount(0);
 
-        const sku = `SKU-CASH-${Date.now()}`;
-        await page.goto('/products/create');
-        await page.getByLabel('Name').fill('Cashier Made');
-        await page.getByLabel('SKU').fill(sku);
-        await page.getByLabel('Price (₱)').fill('5.00');
-        await page.getByLabel('Stock Quantity').fill('3');
-        await page.getByLabel('Low Stock Threshold').fill('1');
-        await page.getByRole('button', { name: 'Save Product' }).click();
-        await expect(page).toHaveURL('/products');
+        await page.goto('/products');
+        await expect(page.getByRole('link', { name: 'Add Product' })).toHaveCount(0);
+    });
 
-        const row = page.locator('tr', { hasText: sku });
-        await expect(row).toBeVisible();
-        await expect(row.getByRole('link', { name: 'Edit' })).toHaveCount(0);
+    test('a cashier gets 403 when creating a product directly', async ({ page }) => {
+        const form = await page.request.get('/products/create');
+        expect(form.status()).toBe(403);
+
+        // Any page with a form gives a token, so the POST reaches the role check instead of a 419.
+        await page.goto('/customers');
+        const token = await page.locator('input[name="_token"]').first().inputValue();
+
+        const store = await page.request.post('/products', {
+            form: {
+                _token: token,
+                name: 'Cashier Made',
+                sku: `SKU-CASH-${Date.now()}`,
+                price: '5.00',
+                stock_quantity: '3',
+                low_stock_threshold: '1',
+            },
+        });
+        expect(store.status()).toBe(403);
     });
 });
