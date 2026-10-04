@@ -1,3 +1,10 @@
+## [1.26.1](https://github.com/stvnfrlls/mysari-app/compare/v1.26.0...v1.26.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* run the app in Asia/Manila time ([ea029ac](https://github.com/stvnfrlls/mysari-app/commit/ea029acf06cc79f5d76f600e30643f8f90d2de2b))
+
 # [1.26.0](https://github.com/stvnfrlls/mysari-app/compare/v1.25.0...v1.26.0) (2026-10-04)
 
 
