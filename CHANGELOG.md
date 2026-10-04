@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/stvnfrlls/mysari-app/compare/v1.26.1...v1.27.0) (2026-10-04)
+
+
+### Features
+
+* show yesterday's summary on the dashboard ([9a90008](https://github.com/stvnfrlls/mysari-app/commit/9a9000807da445a8133cf748c9a4f565e7153d42))
+
 ## [1.26.1](https://github.com/stvnfrlls/mysari-app/compare/v1.26.0...v1.26.1) (2026-10-04)
 
 
