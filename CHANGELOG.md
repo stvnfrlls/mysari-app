@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/stvnfrlls/mysari-app/compare/v1.29.0...v1.29.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* stop deleting a user from deleting their sales ([df171aa](https://github.com/stvnfrlls/mysari-app/commit/df171aa367f5576513013737f5b1f75f67704dac))
+
 # [1.29.0](https://github.com/stvnfrlls/mysari-app/compare/v1.28.0...v1.29.0) (2026-10-04)
 
 
