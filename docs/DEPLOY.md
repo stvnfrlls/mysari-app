@@ -44,5 +44,5 @@ Run everything from the project folder on the server.
 - Add `-e HOME=/tmp` when running tinker as www-data, or it prints a psysh warning and may not run.
 - Never publish the MySQL port.
 - Keep TEST_DB_SWITCH false.
-- Run seeders only by name with `--class`, and only `RoleSeeder` on a server. A plain `db:seed` creates `test@example.com`, and `TestUserSeeder` has a known password.
+- Run seeders only by name with `--class`, and only `RoleSeeder` on a server. `DatabaseSeeder` is empty on purpose, and `TestUserSeeder` has a known password.
 - Restore test: load a backup into a scratch database before you ever need it.
