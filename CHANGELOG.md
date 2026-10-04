@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/stvnfrlls/mysari-app/compare/v1.28.0...v1.29.0) (2026-10-04)
+
+
+### Features
+
+* add a daily summaries history page ([460630b](https://github.com/stvnfrlls/mysari-app/commit/460630b60c83c36fc8971a22c5212a0a50ab2f40))
+
 # [1.28.0](https://github.com/stvnfrlls/mysari-app/compare/v1.27.0...v1.28.0) (2026-10-04)
 
 
