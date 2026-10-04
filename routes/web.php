@@ -8,6 +8,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DailySummaryController;
 
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : view('landing');
@@ -73,5 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
         Route::post('/reports/sales/exports', [ReportController::class, 'requestExport'])->name('reports.sales.exports.store');
         Route::get('/reports/sales/exports/{export}/download', [ReportController::class, 'downloadExport'])->name('reports.sales.exports.download');
+
+        Route::get('/summaries', [DailySummaryController::class, 'index'])->name('summaries.index');
     });
 });

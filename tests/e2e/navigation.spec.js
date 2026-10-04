@@ -8,6 +8,7 @@ const links = [
     { name: 'Transactions', url: '/transactions' },
     { name: 'Customers', url: '/customers' },
     { name: 'Sales Report', url: '/reports/sales' },
+    { name: 'Daily Summaries', url: '/summaries' },
 ];
 
 test.describe('Navigation', () => {

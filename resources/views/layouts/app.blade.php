@@ -385,6 +385,7 @@
                 @role('owner')
                     <a href="{{ route('reports.sales') }}" @class(['active' => request()->routeIs('reports.*')])>Sales Report</a>
                     <a href="{{ route('users.index') }}" @class(['active' => request()->routeIs('users.*')])>Users</a>
+                    <a href="{{ route('summaries.index') }}" @class(['active' => request()->routeIs('summaries.*')])>Daily Summaries</a>
                 @endrole
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

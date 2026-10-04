@@ -55,10 +55,14 @@ test.describe('Cashier restrictions', () => {
 
         const csv = await page.request.get('/reports/sales/export');
         expect(csv.status()).toBe(403);
+
+        const summaries = await page.request.get('/summaries');
+        expect(summaries.status()).toBe(403);
     });
 
     test('a cashier sees no Sales Report link and no product Edit link', async ({ page }) => {
         await expect(page.getByRole('link', { name: 'Sales Report' })).toHaveCount(0);
+        await expect(page.getByRole('link', { name: 'Daily Summaries' })).toHaveCount(0);
 
         const sku = `SKU-CASH-${Date.now()}`;
         await page.goto('/products/create');
