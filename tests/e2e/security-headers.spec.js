@@ -14,6 +14,18 @@ test.describe('Web server hardening', () => {
         expect(res.headers()['referrer-policy']).toBe('strict-origin-when-cross-origin');
     });
 
+    test('plain http gets no HSTS header', async ({ page }) => {
+        const res = await page.request.get('/login');
+        expect(res.headers()['strict-transport-security']).toBeUndefined();
+    });
+
+    test('a request the TLS proxy marks as https gets HSTS', async ({ page }) => {
+        const res = await page.request.get('/login', {
+            headers: { 'X-Forwarded-Proto': 'https' },
+        });
+        expect(res.headers()['strict-transport-security']).toBe('max-age=31536000');
+    });
+
     test('a stray php file is not executed', async ({ page }) => {
         expect((await page.request.get('/anything.php')).status()).toBe(404);
     });
