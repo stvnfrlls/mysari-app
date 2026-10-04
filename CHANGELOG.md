@@ -1,3 +1,11 @@
+# [1.26.0](https://github.com/stvnfrlls/mysari-app/compare/v1.25.0...v1.26.0) (2026-10-04)
+
+
+### Features
+
+* poll top sellers and recent activity on the dashboard ([733ba0d](https://github.com/stvnfrlls/mysari-app/commit/733ba0d2c6fc0558b967f274dcc9dc92e51cb468))
+* prune old sales exports daily ([28c9cf9](https://github.com/stvnfrlls/mysari-app/commit/28c9cf96e734f7a7d163d6b8b788f59abe8a0585))
+
 # [1.25.0](https://github.com/stvnfrlls/mysari-app/compare/v1.24.0...v1.25.0) (2026-10-03)
 
 
