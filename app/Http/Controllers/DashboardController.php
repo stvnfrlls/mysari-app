@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\DailySummary;
 
 class DashboardController extends Controller
 {
@@ -17,8 +18,9 @@ class DashboardController extends Controller
         $lowStockAlerts = $this->openAlerts();
         $topProducts = $this->topProducts();
         $recentTransactions = $this->recentTransactions();
+        $yesterday = DailySummary::where('summary_date', today()->subDay()->toDateString())->first();
 
-        return view('dashboard', compact('stats', 'today', 'topProducts', 'recentTransactions', 'lowStockAlerts'));
+        return view('dashboard', compact('stats', 'today', 'topProducts', 'recentTransactions', 'lowStockAlerts', 'yesterday'));
     }
 
     public function data()

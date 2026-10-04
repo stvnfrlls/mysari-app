@@ -30,6 +30,7 @@ class ResetTestData extends Command
         DB::table('jobs')->truncate();
         DB::table('customers')->truncate();
         DB::table('products')->truncate();
+        DB::table('daily_summaries')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $this->info('Test data reset.');

@@ -45,6 +45,36 @@
             </div>
         </div>
 
+        <div class="activity-panel top-panel" id="yesterdaySummary">
+            <h2>Yesterday</h2>
+            @if ($yesterday)
+                <p class="top-row">
+                    <span>Total sales</span>
+                    <span id="yesterdayTotal">₱{{ number_format($yesterday->total_sales, 2) }}</span>
+                </p>
+                <p class="top-row">
+                    <span>Transactions</span>
+                    <span id="yesterdayCount">{{ $yesterday->transactions_count }}</span>
+                </p>
+                <p class="top-row">
+                    <span>Cash</span>
+                    <span id="yesterdayCash">₱{{ number_format($yesterday->cash, 2) }}</span>
+                </p>
+                <p class="top-row">
+                    <span>Credit</span>
+                    <span id="yesterdayCredit">₱{{ number_format($yesterday->credit, 2) }}</span>
+                </p>
+                <p class="top-row">
+                    <span>Utang at close</span>
+                    <span id="yesterdayUtang">₱{{ number_format($yesterday->utang_outstanding, 2) }}</span>
+                </p>
+            @else
+                <div class="activity-empty">
+                    <p>No summary for yesterday yet.</p>
+                </div>
+            @endif
+        </div>
+
         <div class="activity-panel top-panel" id="topProducts">
             <h2>Top Sellers Today</h2>
             <div id="topList">
