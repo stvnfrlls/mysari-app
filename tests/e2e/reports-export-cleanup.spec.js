@@ -26,6 +26,17 @@ test.describe('Export cleanup', () => {
         await expect(page.locator('#exportList .export-row')).toHaveCount(0);
     });
 
+    test('test:reset-data removes its own export files', async ({ page }) => {
+        test.setTimeout(60000);
+
+        const file = await makeReadyExport(page);
+        expect(fileExists(file)).toBe(true);
+
+        execSync('docker compose exec -T app php artisan test:reset-data');
+
+        expect(fileExists(file)).toBe(false);
+    });
+
     test('a recent export is kept', async ({ page }) => {
         test.setTimeout(60000);
 

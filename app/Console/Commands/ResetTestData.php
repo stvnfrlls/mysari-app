@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ResetTestData extends Command
 {
@@ -22,6 +23,9 @@ class ResetTestData extends Command
         DB::table('transaction_items')->truncate();
         DB::table('transactions')->truncate();
         DB::table('low_stock_alerts')->truncate();
+        foreach (DB::table('report_exports')->whereNotNull('path')->pluck('path') as $path) {
+            Storage::disk('local')->delete($path);
+        }
         DB::table('report_exports')->truncate();
         DB::table('jobs')->truncate();
         DB::table('customers')->truncate();
