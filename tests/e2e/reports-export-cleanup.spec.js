@@ -15,7 +15,7 @@ test.describe('Export cleanup', () => {
         test.setTimeout(60000);
 
         const file = await makeReadyExport(page);
-        expect(fs.existsSync(path.join(exportsDir, file))).toBe(true);
+        expect(fileExists(file)).toBe(true);
 
         execSync(`docker compose exec -T app php artisan tinker --execute="App\\Models\\ReportExport::query()->update(['created_at' => now()->subDays(8)]);"`);
         runPrune();
@@ -33,7 +33,7 @@ test.describe('Export cleanup', () => {
 
         runPrune();
 
-        expect(fs.existsSync(path.join(exportsDir, file))).toBe(true);
+        expect(fileExists(file)).toBe(true);
 
         await page.goto('/reports/sales');
         await expect(page.locator('#exportList .export-row')).toHaveCount(1);
@@ -42,6 +42,15 @@ test.describe('Export cleanup', () => {
 
 function runPrune() {
     execSync(`docker compose exec -T app php artisan tinker --execute="App\\Jobs\\PruneOldExports::dispatchSync();"`);
+}
+
+function fileExists(name) {
+    try {
+        execSync(`docker compose exec -T app test -f /var/www/storage/app/private/exports/${name}`);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 function runQueue() {
