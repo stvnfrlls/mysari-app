@@ -1,3 +1,10 @@
+## [1.29.2](https://github.com/stvnfrlls/mysari-app/compare/v1.29.1...v1.29.2) (2026-10-04)
+
+
+### Bug Fixes
+
+* stop a void from racing a payment on the same customer ([b74688c](https://github.com/stvnfrlls/mysari-app/commit/b74688cc3e30dfc865dfd2c17c16cafe62654b45))
+
 ## [1.29.1](https://github.com/stvnfrlls/mysari-app/compare/v1.29.0...v1.29.1) (2026-10-04)
 
 
