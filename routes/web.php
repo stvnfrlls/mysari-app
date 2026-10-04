@@ -40,7 +40,6 @@ Route::middleware('auth')->group(function () {
         Route::match(['put', 'patch'], '/products/{product}', [ProductController::class, 'update'])->name('products.update');
 
         Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
-        Route::get('/reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
 
         Route::patch('/payments/{payment}/void', [CustomerController::class, 'voidPayment'])->name('payments.void');
     });

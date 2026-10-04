@@ -40,75 +40,79 @@
             <button type="submit" class="cta-button">Apply</button>
         </form>
 
-        <div style="display:flex; gap:16px; margin-bottom:24px;">
-            <div class="table-panel" style="flex:1; padding:20px;">
-                <p class="page-subtitle">Total Revenue</p>
-                <p style="font-size:28px; font-weight:600;">₱{{ number_format($summary['total_revenue'], 2) }}</p>
-            </div>
-            <div class="table-panel" style="flex:1; padding:20px;" id="costCard">
-                <p class="page-subtitle">Cost of Goods</p>
-                <p style="font-size:28px; font-weight:600;">
-                    {{ $summary['total_cost'] === null ? '—' : '₱' . number_format($summary['total_cost'], 2) }}
-                </p>
-            </div>
-            <div class="table-panel" style="flex:1; padding:20px;" id="profitCard">
-                <p class="page-subtitle">Profit</p>
-                <p style="font-size:28px; font-weight:600;">
-                    {{ $summary['profit'] === null ? '—' : '₱' . number_format($summary['profit'], 2) }}
-                </p>
-            </div>
-            <div class="table-panel" style="flex:1; padding:20px;">
-                <p class="page-subtitle">Transactions</p>
-                <p style="font-size:28px; font-weight:600;">{{ $summary['transaction_count'] }}</p>
-            </div>
-        </div>
-
-        @if ($summary['uncosted_lines'] > 0)
-            <p class="page-subtitle" id="costNote" style="margin-bottom:24px;">
-                {{ $summary['uncosted_lines'] }} sale {{ Str::plural('line', $summary['uncosted_lines']) }}
-                without a cost {{ $summary['uncosted_lines'] === 1 ? 'is' : 'are' }} left out of cost and profit.
-            </p>
-        @endif
-
-        <div class="table-panel">
-            @if ($productBreakdown->isEmpty())
-                <div class="empty-state">
-                    <p>No sales in this period.</p>
+        <div id="reportData">
+            <div style="display:flex; gap:16px; margin-bottom:24px;">
+                <div class="table-panel" style="flex:1; padding:20px;" id="revenueCard">
+                    <p class="page-subtitle">Total Revenue</p>
+                    <p style="font-size:28px; font-weight:600;">₱{{ number_format($summary['total_revenue'], 2) }}</p>
                 </div>
-            @else
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Units Sold</th>
-                            <th>Revenue</th>
-                            <th>Cost</th>
-                            <th>Profit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($productBreakdown as $row)
-                            @php
-                                $hasCost = $row->total_cost !== null;
-                                $rowProfit = $hasCost ? (float) $row->costed_revenue - (float) $row->total_cost : null;
-                                $partial = $hasCost && (int) $row->costed_quantity < (int) $row->total_quantity;
-                            @endphp
-                            <tr>
-                                <td>{{ $row->product->name ?? 'Deleted product' }}</td>
-                                <td>{{ $row->total_quantity }}</td>
-                                <td>₱{{ number_format($row->total_revenue, 2) }}</td>
-                                <td>{{ $hasCost ? '₱' . number_format($row->total_cost, 2) : '—' }}</td>
-                                <td>
-                                    {{ $hasCost ? '₱' . number_format($rowProfit, 2) : '—' }}
-                                    @if ($partial)
-                                        <span class="muted" title="Only units with a cost are included">*</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-panel" style="flex:1; padding:20px;" id="costCard">
+                    <p class="page-subtitle">Cost of Goods</p>
+                    <p style="font-size:28px; font-weight:600;">
+                        {{ $summary['total_cost'] === null ? '—' : '₱' . number_format($summary['total_cost'], 2) }}
+                    </p>
+                </div>
+                <div class="table-panel" style="flex:1; padding:20px;" id="profitCard">
+                    <p class="page-subtitle">Profit</p>
+                    <p style="font-size:28px; font-weight:600;">
+                        {{ $summary['profit'] === null ? '—' : '₱' . number_format($summary['profit'], 2) }}
+                    </p>
+                </div>
+                <div class="table-panel" style="flex:1; padding:20px;" id="txCard">
+                    <p class="page-subtitle">Transactions</p>
+                    <p style="font-size:28px; font-weight:600;">{{ $summary['transaction_count'] }}</p>
+                </div>
+            </div>
+
+            @if ($summary['uncosted_lines'] > 0)
+                <p class="page-subtitle" id="costNote" style="margin-bottom:24px;">
+                    {{ $summary['uncosted_lines'] }} sale {{ Str::plural('line', $summary['uncosted_lines']) }}
+                    without a cost {{ $summary['uncosted_lines'] === 1 ? 'is' : 'are' }} left out of cost and profit.
+                </p>
             @endif
+
+            <div class="table-panel">
+                @if ($productBreakdown->isEmpty())
+                    <div class="empty-state">
+                        <p>No sales in this period.</p>
+                    </div>
+                @else
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Units Sold</th>
+                                <th>Revenue</th>
+                                <th>Cost</th>
+                                <th>Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($productBreakdown as $row)
+                                @php
+                                    $hasCost = $row->total_cost !== null;
+                                    $rowProfit = $hasCost
+                                        ? (float) $row->costed_revenue - (float) $row->total_cost
+                                        : null;
+                                    $partial = $hasCost && (int) $row->costed_quantity < (int) $row->total_quantity;
+                                @endphp
+                                <tr>
+                                    <td>{{ $row->product->name ?? 'Deleted product' }}</td>
+                                    <td>{{ $row->total_quantity }}</td>
+                                    <td>₱{{ number_format($row->total_revenue, 2) }}</td>
+                                    <td>{{ $hasCost ? '₱' . number_format($row->total_cost, 2) : '—' }}</td>
+                                    <td>
+                                        {{ $hasCost ? '₱' . number_format($rowProfit, 2) : '—' }}
+                                        @if ($partial)
+                                            <span class="muted" title="Only units with a cost are included">*</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            </div>
         </div>
 
         <div id="exportList" style="margin-top:24px;">
@@ -153,23 +157,41 @@
                 return document.querySelector('#exportList .export-row[data-status="pending"]') !== null;
             }
 
+            async function fetchFresh() {
+                const res = await fetch(window.location.href, {
+                    headers: {
+                        'Accept': 'text/html'
+                    },
+                    credentials: 'same-origin',
+                });
+                if (!res.ok) return null;
+                return new DOMParser().parseFromString(await res.text(), 'text/html');
+            }
+
+            function swap(doc, id) {
+                const fresh = doc.getElementById(id);
+                const current = document.getElementById(id);
+                if (fresh && current) current.replaceWith(fresh);
+            }
+
+            // Totals and breakdown, every 10 seconds, skipped while the tab is hidden.
+            setInterval(async function() {
+                if (document.hidden) return;
+                try {
+                    const doc = await fetchFresh();
+                    if (doc) swap(doc, 'reportData');
+                } catch (e) {
+                    // Network blip: try again next tick.
+                }
+            }, 10000);
+
+            // Export list, every 3 seconds while an export is pending.
             if (!hasPending()) return;
 
             const timer = setInterval(async function() {
                 try {
-                    const res = await fetch(window.location.href, {
-                        headers: {
-                            'Accept': 'text/html'
-                        },
-                        credentials: 'same-origin',
-                    });
-                    if (!res.ok) return;
-
-                    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-                    const fresh = doc.getElementById('exportList');
-                    if (fresh) {
-                        document.getElementById('exportList').replaceWith(fresh);
-                    }
+                    const doc = await fetchFresh();
+                    if (doc) swap(doc, 'exportList');
                     if (!hasPending()) clearInterval(timer);
                 } catch (e) {
                     // Network blip: try again next tick.
