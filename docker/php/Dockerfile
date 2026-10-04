@@ -10,7 +10,8 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN composer install --no-interaction --optimize-autoloader
+ARG COMPOSER_FLAGS=""
+RUN composer install --no-interaction --optimize-autoloader $COMPOSER_FLAGS
 
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
